@@ -28,5 +28,5 @@ hs_err_pid*
 .settings/
 /target/
 
-# EvoSuite files
-.evosuite/
+# DB files
+*.db

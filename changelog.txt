@@ -1,6 +1,14 @@
 Please note that this version is marked "unstable", meaning it can be broken from time
 to time. Do at least check the changelog for relevant info before using it.
 
+2.0.1 2023.04.06
+*Update Pom file to build jar file with dependencies.
+
+2.0.0 2023.04.06
+*Replaced the MySQL and PostgreSQL DB support with SQLite which means that this version is incompatible with all previous versions.
+*Major code refactor and cleanup to target Java 17.
+*The GUI look and feel will now default to the system look and feel.
+
 1.19p 2010.03.07
 *Hack to keep receive thread from dribbling all over itself and quitting if the server replies with a 602.  Probably.
 

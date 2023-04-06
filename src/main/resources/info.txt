@@ -1,5 +1,8 @@
 WebAOM!
 
+2.0.1 2023.04.06
+*Update Pom file to build jar file with dependencies.
+
 2.0.0 2023.04.06
 *Replaced the MySQL and PostgreSQL DB support with SQLite which means that this version is incompatible with all previous versions.
 *Major code refactor and cleanup to target Java 17.
