@@ -4,6 +4,18 @@
 	<groupId>com.github.arucard21.epox.webaom</groupId>
 	<artifactId>webaom</artifactId>
 	<version>1.19p</version>
+	<properties>
+		<sqlite-jdbc-version>3.41.2.1</sqlite-jdbc-version>
+		<maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
+		<maven-surefire-plugin-version>3.0.0</maven-surefire-plugin-version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>${sqlite-jdbc-version}</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<resources>
 			<resource>
@@ -13,59 +25,14 @@
 				</excludes>
 			</resource>
 		</resources>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.evosuite.plugins</groupId>
-					<artifactId>evosuite-maven-plugin</artifactId>
-					<version>1.0.6</version>
-					<executions>
-						<execution>
-							<goals>
-								<goal> prepare </goal>
-							</goals>
-							<phase> process-test-classes </phase>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.1</version>
+				<version>${maven-compiler-plugin-version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<properties>
-						<property>
-							<name>listener</name>
-							<value>org.evosuite.runtime.InitializingListener</value>
-						</property>
-					</properties>
+					<release>17</release>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.evosuite</groupId>
-			<artifactId>evosuite-standalone-runtime</artifactId>
-			<version>1.0.6</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>
