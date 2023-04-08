@@ -14,10 +14,10 @@ public class Bits {
     }
 
     public boolean get(int i) {
-
         if (i >= mIlen) {
             return false;
         }
+
         return (1 & (mBuse[i / 8] >> (i % 8))) == 1;
     }
 
@@ -29,7 +29,6 @@ public class Bits {
      * @return false if the index is out of bounds.
      */
     public boolean set(int i, boolean b) {
-
         if (i >= mIlen) {
             return false;
         }
@@ -39,6 +38,7 @@ public class Bits {
         } else {
             mBuse[i / 8] &= (byte) ~(1 << (i % 8));
         }
+
         return true;
     }
 
@@ -49,26 +49,24 @@ public class Bits {
      * @return true if one bit was changed.
      */
     public boolean fill(boolean b) {
-
         if (b) {
-
             for (int i = 0; i < mIlen; i++) {
-
                 if (!get(i)) {
                     set(i, true);
                     return true;
                 }
             }
+
             return false;
         }
 
         for (int i = mIlen - 1; i >= 0; i--) {
-
             if (get(i)) {
                 set(i, false);
                 return true;
             }
         }
+
         return false;
     }
 
@@ -79,6 +77,7 @@ public class Bits {
         for (int i = 0; i < mIlen; i++) {
             sb.append(get(i) ? 1 : 0);
         }
+
         return sb.toString();
     }
 
@@ -96,6 +95,7 @@ public class Bits {
                 x++;
             }
         }
+
         return x;
     }
 
@@ -123,12 +123,12 @@ public class Bits {
         int n = 0;
 
         for (int i = 1; i < mIlen; i++) {
-
             if (get(i) != b) {
                 n++;
                 b = !b;
             }
         }
+
         return n;
     }
 
@@ -136,9 +136,7 @@ public class Bits {
         boolean f = false;
 
         for (int i = mIlen - 1; i >= 0; i--) {
-
             if (f) {
-
                 if (!get(i)) {
                     return true;
                 }
@@ -146,11 +144,11 @@ public class Bits {
                 f = true;
             }
         }
+
         return false;
     }
 
     public void reset() {
-
         for (int i = 0; i < mBuse.length; i++) {
             mBuse[i] = 0;
         }

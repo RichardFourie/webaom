@@ -83,6 +83,7 @@ public class U {
         if (y < 0) {
             return null;
         }
+
         return str.substring(x, y);
     }
 
@@ -91,10 +92,10 @@ public class U {
     }
 
     public static String n(String str) {
-
         if (str == null || str.length() < 1 || "null".equals(str)) {
             return null;
         }
+
         return str;
     }
 
@@ -103,7 +104,6 @@ public class U {
 
         // StringBuffer sb = new StringBuffer(src);
         for (int i = 0; i < sb.length(); i++) {
-
             if (sb.charAt(i) == c) {
                 cnt++;
             }
@@ -116,7 +116,6 @@ public class U {
         int j = 0;
 
         for (int i = 0; i < sb.length(); i++) {
-
             if (sb.charAt(i) == c) {
                 pos[j++] = i;
             }
@@ -129,14 +128,15 @@ public class U {
             res[i] = sb.substring(j, pos[i]);
             j = pos[i] + 1;
         }
+
         return res;
     }
 
     public static String dehtmlize(String htm) {
-
         if (htm == null) {
             return null;
         }
+
         StringBuilder sb0 = new StringBuilder(htm.length());
         StringBuilder sb1 = new StringBuilder(htm);
         boolean in = false;
@@ -159,14 +159,15 @@ public class U {
                 sb0.append(c);
             }
         }
+
         return sb0.toString();
     }
 
     public static String htmldesc(String s) {
-
         if (s == null) {
             return null;
         }
+
         StringBuilder sb0 = new StringBuilder(s);
         StringBuilder sb1 = new StringBuilder(s.length());
         StringBuilder sb2 = new StringBuilder(5);
@@ -187,12 +188,11 @@ public class U {
                     sb1.append(c);
                 }
             } else if (c == ';') {
-
                 if (ok) {
 
                     try {
                         sb1.append((char) Integer.parseInt(sb2.toString()));
-                    } catch (NumberFormatException e) {
+                    } catch (@SuppressWarnings("unused") NumberFormatException e) {
                         sb1.append('&');
                         sb1.append('#');
                         sb1.append(sb2);
@@ -203,7 +203,6 @@ public class U {
                     sb1.append(';');
                 }
             } else if (ok) {
-
                 if (Character.isDigit(c) && sb2.length() < 11) {
                     sb2.append(c);
                 } else {
@@ -217,16 +216,17 @@ public class U {
                 sb1.append(c);
             }
         }
+
         return sb1.toString();
     }
 
     private static final char[] S = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
 
     private static String sbyte(double d, int p) {
-
         if (d < 1000) {
             return U.def.format(d) + " " + U.S[p] + "B";
         }
+
         return U.sbyte(d / 1024, p + 1);
     }
 
@@ -250,6 +250,7 @@ public class U {
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f), (int) f.length())) {
             byte buf[] = new byte[(int) f.length()];
             bis.read(buf);
+
             return new String(buf);
         }
     }
@@ -278,6 +279,7 @@ public class U {
         for (; i < s.length(); i++) {
             sb.append(s.charAt(i));
         }
+
         return sb.toString();
     }
 }

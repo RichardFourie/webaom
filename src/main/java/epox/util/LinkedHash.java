@@ -51,8 +51,10 @@ public class LinkedHash extends HashMap<Job, Node> {
 
         if (super.put(o, n) == null) {
             tail = tail.next = n;
+
             return true;
         }
+
         return false;
     }
 
@@ -62,6 +64,7 @@ public class LinkedHash extends HashMap<Job, Node> {
 
         if (n == null) {
             System.out.println("! LinkedHash: Tried to remove non existing entry: " + key);
+
             return null;
         }
         n.prev.next = n.next;
@@ -71,6 +74,7 @@ public class LinkedHash extends HashMap<Job, Node> {
         } else {
             tail = n.prev;
         }
+
         return null;
     }
 
@@ -82,10 +86,10 @@ public class LinkedHash extends HashMap<Job, Node> {
     }
 
     public Object getFirst() {
-
         if (head.next == null) {
             return null;
         }
+
         return head.next.o;
     }
 

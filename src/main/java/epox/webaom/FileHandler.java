@@ -49,8 +49,8 @@ public class FileHandler {
     }
 
     public synchronized boolean addFile(File file) {
-
-        if ((m_ext.includes(getExtension(file)) || m_ext.getSize() == 0) && !A.jobs.has(file) && !locked(file)) {
+        if ((m_ext.includes(FileHandler.getExtension(file)) || m_ext.getSize() == 0) && !A.jobs.has(file)
+                && !FileHandler.locked(file)) {
             Job j = A.jobs.add(file);
 
             if (j != null) {
@@ -58,29 +58,27 @@ public class FileHandler {
                 return true;
             }
         }
+
         return false;
     }
 
-    protected String getExtension(File file) {
+    protected static String getExtension(File file) {
         int i = file.getName().lastIndexOf(".");
 
         if (i < 0) {
             return null;
         }
+
         return file.getName().substring(i + 1).toLowerCase();
     }
 
-    private boolean locked(File f) {
-
-        try {
-            InputStream fis = new FileInputStream(f);
-            fis.close();
+    private static boolean locked(File f) {
+        try (InputStream fis = new FileInputStream(f)) {
             return false;
-        } catch (FileNotFoundException e) {
-            // e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return true;
     }
 
@@ -99,10 +97,10 @@ public class FileHandler {
     protected class FileFilter1 extends javax.swing.filechooser.FileFilter implements java.io.FileFilter {
         @Override
         public boolean accept(File file) {
-
-            if (file.isDirectory() || m_ext.includes(getExtension(file)) || m_ext.getSize() == 0) {
+            if (file.isDirectory() || m_ext.includes(FileHandler.getExtension(file)) || m_ext.getSize() == 0) {
                 return true;
             }
+
             return false;
         }
 

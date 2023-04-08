@@ -64,7 +64,7 @@ public class DB {
         exec("delete from etb", false);
     }
 
-    private void _exception(Exception e) {
+    private static void _exception(Exception e) {
         e.printStackTrace();
     }
 
@@ -172,7 +172,7 @@ public class DB {
                 con.close();
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
         mBinitd = false;
     }
@@ -250,7 +250,7 @@ public class DB {
 
                 if (e.getErrorCode() != 1062) {
                     _out("! DB Error Code: " + e.getErrorCode());
-                    _exception(e);
+                    DB._exception(e);
                 } else {
                     _out("{ DUPE!");
                 }
@@ -286,7 +286,7 @@ public class DB {
 
                 if (e.getErrorCode() != 1062) {
                     _out("! DB Error Code: " + e.getErrorCode());
-                    _exception(e);
+                    DB._exception(e);
                 } else {
                     _out("{ DUPE!");
                 }
@@ -397,7 +397,7 @@ public class DB {
                 }
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
 
         return -1;
@@ -456,7 +456,7 @@ public class DB {
 
             return null;
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
 
             return null;
         }
@@ -489,7 +489,7 @@ public class DB {
                 return status;
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
 
         return -1;
@@ -516,7 +516,7 @@ public class DB {
                 }
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
     }
 
@@ -612,7 +612,7 @@ public class DB {
             if (DB.comex(e.getMessage())) {
                 throw e;
             }
-            _exception(e);
+            DB._exception(e);
         }
 
         try {
@@ -625,7 +625,7 @@ public class DB {
             if (DB.comex(e.getMessage())) {
                 throw e;
             }
-            _exception(e);
+            DB._exception(e);
         }
 
         return false;

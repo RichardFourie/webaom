@@ -34,7 +34,7 @@ public class Job {
     // = 108 bytes
     private static final char S = '|';
     private int mIst;
-    public int mIdid, mIlid = 0, mIfid = 0;// TODO remove rIlid
+    public int mIdid, mIlid = 0, mIfid = 0;
     public boolean mBf = true; // fresh
     public long mLs;
     public File m_fc, m_fn;
@@ -83,7 +83,6 @@ public class Job {
     }
 
     public boolean hide(String s) {
-
         if (s == null || s.length() < 1) {
             return false;
         }
@@ -91,6 +90,7 @@ public class Job {
         if (s.charAt(0) == '!') {
             return m_fc.getAbsolutePath().matches(s.substring(1));
         }
+
         return !m_fc.getAbsolutePath().matches(s);
     }
 
@@ -103,17 +103,19 @@ public class Job {
     }
 
     public String getExtension() {
-
         if (m_fa == null || m_fa.ext == null) {
             String s = m_fc.getName();
             int i = s.lastIndexOf('.');
 
             if (i < 1) {
                 System.out.println("No ext: " + s);
+
                 return "unk";
             }
+
             return s.substring(i + 1);
         }
+
         return m_fa.ext;
     }
 
@@ -142,6 +144,7 @@ public class Job {
         if (u) {
             return m_fa == null && b;
         }
+
         return b && (f < 1 || (m_fa != null && (m_fa.stt & f) > 0));
     }
 
@@ -153,14 +156,16 @@ public class Job {
         }
 
         if (h == Job.H_MISSING) {
-
             switch (s) {
             case FINISHED:
             case ADDWAIT:
             case REMWAIT:
                 return false;
+            default:
+                break;
             }
         }
+
         return true;
     }
 
@@ -173,10 +178,10 @@ public class Job {
     }
 
     public String getStatusText() {
-
         if (check(Job.H_NORMAL)) {
             return Job.statusStr(getStatus());
         }
+
         return Job.statusStr(getStatus()) + " [" + Job.statusStr(getHealth()) + "]";
     }
 
@@ -184,7 +189,6 @@ public class Job {
         int health = getHealth();
 
         if (test) {
-
             // if(health>H_PAUSED&&!(status==FINISHED||status==REMWAIT||status==ADDWAIT))
             // &&(status&F_PD)==0)//extra check, could be removed maybe
             // return;
@@ -199,9 +203,8 @@ public class Job {
         }
 
         if ((status & Job.F_DB) == Job.F_DB) {// only for main status
-
             if (test && health == Job.H_NORMAL) {
-                A.jobs.updateQueues(this, getStatus(), status & Job.M_S);// TODO pause off fix
+                A.jobs.updateQueues(this, getStatus(), status & Job.M_S);
             }
             // A.jobc.register(getRegVal(), (status|H_NORMAL)&M_R);
             health = Job.H_NORMAL;
@@ -243,7 +246,6 @@ public class Job {
     }
 
     public void updateHealth(int i) {
-
         if (i != Job.H_DELETED && checkOr(Job.H_MISSING | Job.H_DELETED)) {
             return;
         }
@@ -269,12 +271,13 @@ public class Job {
         case H_MISSING:
             health = Job.H_MISSING;
             break;
+        default:
+            break;
         }
         setHealth(health);
     }
 
     public void find(File f) {
-
         if (!check(Job.H_MISSING)) {
             return;
         }
@@ -357,9 +360,8 @@ public class Job {
     }
 
     public String convert(String s) {
-        // s = s.trim();
-
-        String avi0 = U.getInTag(s, "avinfo");
+        String newS = s;
+        String avi0 = U.getInTag(newS, "avinfo");
 
         if (avi0 != null) {
             String avi1 = avi0;
@@ -379,9 +381,10 @@ public class Job {
             } else {
                 avi1 = "";
             }
-            s = U.replace(s, avi0, avi1);
+            newS = U.replace(newS, avi0, avi1);
         }
-        return U.replaceCCCode(s, genMap());
+
+        return U.replaceCCCode(newS, genMap());
     }
 
     public AMap genMap() {
@@ -447,7 +450,7 @@ public class Job {
                 am.put("eps", m_fa.anime.eps);
                 am.put("typ", m_fa.anime.typ);
                 am.put("yea", m_fa.anime.yea);
-                am.put("gen", m_fa.anime.cat.replaceAll(",", ", "));
+                am.put("gen", m_fa.anime.cat.replace(",", ", "));
                 am.put("lep", m_fa.anime.lep);
                 am.put("yen", m_fa.anime.yen); // NvrBst: Unsure about this change; Needs Testing
             }

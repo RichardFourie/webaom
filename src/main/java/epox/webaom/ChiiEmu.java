@@ -42,7 +42,6 @@ public class ChiiEmu implements CommandModel {
         m_ac = A.conn;
 
         if (cmd.startsWith("!font")) {
-
             if (cmd.length() > 6) {
                 A.font = cmd.substring(6).trim();
                 A.setFont(A.font);
@@ -64,7 +63,6 @@ public class ChiiEmu implements CommandModel {
     }
 
     public void println(Object o) {
-
         if (m_log == null) {
             return;
         }
@@ -93,14 +91,13 @@ public class ChiiEmu implements CommandModel {
 
             } catch (AConEx e) {
                 res = e.getMessage();
-            } catch (NullPointerException e) {
+            } catch (@SuppressWarnings("unused") NullPointerException e) {
                 /* don't care */}
             println(res);
             mTw = null;
         }
 
         public String lookUp(String s) throws AConEx {
-
             if (mScmd == null | mScmd.length() < 3) {
                 return "No Command";
             }
@@ -153,6 +150,7 @@ public class ChiiEmu implements CommandModel {
             if (mScmd.charAt(0) == '?') {
                 return m_ac.send(s.substring(1), true);
             }
+
             return "Unknown command";
         }
 
@@ -168,7 +166,7 @@ public class ChiiEmu implements CommandModel {
 
             try {
                 return m_ac.send(c, i + Integer.parseInt(s), true).data;
-            } catch (NumberFormatException e) {
+            } catch (@SuppressWarnings("unused") NumberFormatException e) {
                 /* part of plan */}
 
             if (n == null) {
@@ -177,6 +175,7 @@ public class ChiiEmu implements CommandModel {
             return m_ac.send(c, n + s, true).data;
         }
 
+        @SuppressWarnings("unused")
         public String stosta(String p, int t) throws AConEx {
             String a[] = U.split(p, ',');
 
@@ -261,6 +260,7 @@ public class ChiiEmu implements CommandModel {
             if ("1".equals(r.data)) {
                 return cmd + ": one entry updated";
             }
+
             return cmd + ": updated " + r.data + " entries";
         }
 
@@ -275,6 +275,7 @@ public class ChiiEmu implements CommandModel {
                 type = 3;
             }
             AConR r = m_ac.send("RANDOMANIME", "type=" + type, true);
+
             return "RANDOM " + anime(r.data);
         }
 
@@ -306,6 +307,7 @@ public class ChiiEmu implements CommandModel {
             sb.append(")");
             sb.append(", Cat: ");
             sb.append(s[18]);
+
             return sb.toString();
         }
 
@@ -335,6 +337,7 @@ public class ChiiEmu implements CommandModel {
             sb.append(" files, url: ");
             sb.append(s[8]);
             sb.append(", http://anidb.net/g" + s[0]);
+
             return sb.toString();
         }
 
@@ -413,6 +416,7 @@ public class ChiiEmu implements CommandModel {
             sb.append("%, Lameness: ");
             sb.append(s[9]);
             sb.append("%.");
+
             return sb.toString();
         }
 
@@ -424,8 +428,8 @@ public class ChiiEmu implements CommandModel {
          * !watched <anime> <epnumber> !watched <fid> !watched <ed2k link> !watched
          * <anime> upto <epnumber> !watched <anime> all !watched <anime> none
          **/
+        @SuppressWarnings("unused")
         public String watched(String s) {
-
             try {
                 StringBuilder api = new StringBuilder("edit=1&viewed=");
                 int j = s.indexOf("ed2k://|file|");
@@ -467,7 +471,6 @@ public class ChiiEmu implements CommandModel {
                     String anime = s.substring(0, j).trim();
 
                     if (anime.length() < 1) {
-
                         if (epno < 1) {
                             return ChiiEmu.getS(ChiiEmu.I_WATCH);
                         }
@@ -485,21 +488,22 @@ public class ChiiEmu implements CommandModel {
                 AConR r = m_ac.send("MYLISTADD", api.toString(), true);
 
                 if (r.code == AConR.MYLIST_ENTRY_EDITED) {
-
                     if (r.data.length() > 3) {
                         return "WATCHED: entry updated.";
                     }
+
                     return "WATCHED: " + r.data + " entries updated.";
                 }
+
                 return "WATCHED: no such entry";
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return ChiiEmu.getS(ChiiEmu.I_WATCH);
         }
 
         public String state(String s) {
-
             try {
                 int i = s.lastIndexOf(' ');
                 int state = 0;
@@ -544,7 +548,6 @@ public class ChiiEmu implements CommandModel {
                     String anime = s.substring(0, j).trim();
 
                     if (anime.length() < 1) {
-
                         if (epno < 1) {
                             return ChiiEmu.getS(ChiiEmu.I_STATE);
                         }
@@ -554,7 +557,7 @@ public class ChiiEmu implements CommandModel {
 
                         try {
                             api.append("&aid=").append(Integer.parseInt(anime));
-                        } catch (NumberFormatException e) {
+                        } catch (@SuppressWarnings("unused") NumberFormatException e) {
                             api.append("&aname=").append(anime);
                         }
                     }
@@ -562,16 +565,18 @@ public class ChiiEmu implements CommandModel {
                 AConR r = m_ac.send("MYLISTADD", api.toString(), true);
 
                 if (r.code == AConR.MYLIST_ENTRY_EDITED) {
-
                     if (r.data.length() > 3) {
                         return "STATE: entry updated.";
                     }
+
                     return "STATE: " + r.data + " entries updated.";
                 }
+
                 return "STATE: no such entry";
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return ChiiEmu.getS(ChiiEmu.I_STATE);
         }
     }
@@ -579,18 +584,13 @@ public class ChiiEmu implements CommandModel {
     protected static final int I_WATCH = 0, I_STATE = 1, I_STAT2 = 2, I_STORA = 3;
 
     protected static String getS(int i) {
-
-        switch (i) {
-        case I_WATCH:
-            return "WATCHED: usage: !watched <anime> <epnumber>, !state <fid>, !state <ed2k link>, epnumber may be 'all', 'upto <epno>' or 'none'.";
-        case I_STATE:
-            return "STATE: usage: !state <anime> <epnumber> <state>, !state <fid> <state>, !state <ed2k link> <state>, !state last <state>, epnumber may be 'all' or 'upto <epno>'. State is: unknown/hdd/cd/deleted.";
-        case I_STAT2:
-            return "!state2 anime/aid, group/gid/all, all/upto x/x, unknown/hdd/cd/deleted";
-        case I_STORA:
-            return "!storage anime/aid, group/gid/all, all/upto x/x, text";
-        }
-        return "NOO!";
+        return switch (i) {
+        case I_WATCH -> "WATCHED: usage: !watched <anime> <epnumber>, !state <fid>, !state <ed2k link>, epnumber may be 'all', 'upto <epno>' or 'none'.";
+        case I_STATE -> "STATE: usage: !state <anime> <epnumber> <state>, !state <fid> <state>, !state <ed2k link> <state>, !state last <state>, epnumber may be 'all' or 'upto <epno>'. State is: unknown/hdd/cd/deleted.";
+        case I_STAT2 -> "!state2 anime/aid, group/gid/all, all/upto x/x, unknown/hdd/cd/deleted";
+        case I_STORA -> "!storage anime/aid, group/gid/all, all/upto x/x, text";
+        default -> "NOO!";
+        };
     }
 
     protected static final String[] S_STAT = { " animes, ", " eps, ", " files, ", " groups, ", " users, ", " KB, ",

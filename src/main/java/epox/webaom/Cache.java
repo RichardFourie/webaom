@@ -36,12 +36,7 @@ import epox.webaom.data.Path;
 
 public class Cache {
     protected class MyMap extends HashMap<Integer, Base> {
-
-        /**
-         *
-         */
         private static final long serialVersionUID = 7081132665144621771L;
-        //
     }
 
     private MyMap m_hm[];
@@ -61,7 +56,6 @@ public class Cache {
     }
 
     public void clear() {
-
         for (MyMap element : m_hm) {
             element.clear();
         }
@@ -93,12 +87,12 @@ public class Cache {
                 m_hm[t].put(Integer.valueOf(id), b);
             }
         }
+
         return b;
     }
 
     /////////////// OTHER///////////////
     public synchronized String gatherInfo(Job j, boolean tree) { // for new files
-
         if (j == null || j.m_fa == null) {
             return null; // nasty?
         }
@@ -119,16 +113,18 @@ public class Cache {
             if (tree) {
                 treeAdd(j);
             }
+
             return null;
         } catch (Exception e) {
             U.err(f);
             e.printStackTrace();
+
             return e.getMessage();
         }
     }
 
+    @SuppressWarnings("unused")
     public AFile parseFile(String s[], Job j) {
-
         if (s.length != 34) {
             System.out.println("Unexpected response! len=" + s.length);
             j.setError("Unexpected response from server.");
@@ -232,12 +228,10 @@ public class Cache {
         }
 
         switch (Cache.mImode) {
-        case I_MAF: {
+        case I_MAF:
             a.add(f);
-        }
             break;
-        case I_MAEF: {
-
+        case I_MAEF:
             if (a.has(f.ep)) {
                 a.remove(f.ep);
             }
@@ -247,44 +241,42 @@ public class Cache {
             }
             f.ep.add(f);
             a.add(f.ep);
-        }
             break;
-        case I_MAGF: {
-
+        case I_MAGF:
             if (f.gid < 1) {
                 f.group = Group.none;
             }
-            Base b = a.get(f.group.getKey());
+            Base b1 = a.get(f.group.getKey());
 
-            if (b != null) {
-                a.remove(b);
+            if (b1 != null) {
+                a.remove(b1);
             } else {
-                b = new AG(a, f.group);
+                b1 = new AG(a, f.group);
             }
 
-            if (b.has(f)) {
-                b.remove(f);
+            if (b1.has(f)) {
+                b1.remove(f);
             }
-            b.add(f);
-            a.add(b);
-        }
+            b1.add(f);
+            a.add(b1);
             break;
-        case I_MAFF: {
+        case I_MAFF:
             String p = j.getFile().getParent();
-            Base b = a.get(p);
+            Base b2 = a.get(p);
 
-            if (b != null) {
-                a.remove(b);
+            if (b2 != null) {
+                a.remove(b2);
             } else {
-                b = new Path(p);
+                b2 = new Path(p);
             }
 
-            if (b.has(f)) {
-                b.remove(f);
+            if (b2.has(f)) {
+                b2.remove(f);
             }
-            b.add(f);
-            a.add(b);
-        }
+            b2.add(f);
+            a.add(b2);
+            break;
+        default:
             break;
         }
         a.regEp(f.ep, true);
@@ -293,7 +285,6 @@ public class Cache {
     }
 
     public void treeRemove(Job j) {
-
         if (j.incompl()) {
             return;
         }
@@ -305,49 +296,46 @@ public class Cache {
         }
 
         switch (Cache.mImode) {
-        case I_MAF: {
+        case I_MAF:
             a.remove(f);
-        }
             break;
-        case I_MAEF: {
+        case I_MAEF:
             a.remove(f.ep);
             f.ep.remove(f);
 
             if (f.ep.size() > 0) {
                 a.add(f.ep);
             }
-        }
             break;
-        case I_MAGF: {
-
+        case I_MAGF:
             if (f.gid < 1) {
                 f.group = Group.none;
             }
-            Base b = a.get(f.group.getKey());
+            Base b1 = a.get(f.group.getKey());
 
-            if (b != null) {
-                a.remove(b);
-                b.remove(f);
+            if (b1 != null) {
+                a.remove(b1);
+                b1.remove(f);
 
-                if (b.size() > 0) {
-                    a.add(b);
+                if (b1.size() > 0) {
+                    a.add(b1);
                 }
             }
-        }
             break;
-        case I_MAFF: {
+        case I_MAFF:
             String p = j.getFile().getParent();
-            Base b = a.get(p);
+            Base b2 = a.get(p);
 
-            if (b != null) {
-                a.remove(b);
-                b.remove(f);
+            if (b2 != null) {
+                a.remove(b2);
+                b2.remove(f);
 
-                if (b.size() > 0) {
-                    a.add(b);
+                if (b2.size() > 0) {
+                    a.add(b2);
                 }
             }
-        }
+            break;
+        default:
             break;
         }
         a.regEp(f.ep, f.ep.size() > 0);

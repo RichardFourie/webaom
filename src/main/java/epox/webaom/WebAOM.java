@@ -37,7 +37,6 @@ import epox.swing.MySwing;
 public class WebAOM {
 
     public static void main(String[] args) {
-
         try {
             WebAOM.mmain();
         } catch (Exception e) {
