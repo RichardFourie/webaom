@@ -1,22 +1,29 @@
-Please note that this version is marked "unstable", meaning it can be broken from time
-to time. Do at least check the changelog for relevant info before using it.
+WebAOM!
 
-2.0.1 2023.04.06
+2.1.0 2023.04.08:
+*More code cleanup using stricter Java compiler settings.
+*Updated Jacksum classes from v1.5.0 to v3.5.0.
+*Removed gnu crypto classes in favour of pulling them in via the latest gnu-crypto dependency (v2.0.1)
+*Removed the bitzi TigerTree class in favour of the Jacksum version.
+*Removed the twmacinta fast MD5 hash classes in favour of the built-in JRE/JDK MD5 hash. The modern version of the MD5 hash in the JRE/JDK is slightly faster than the old fast MD5 version.
+*Fix various potential resource leaks.
+
+2.0.1 2023.04.06:
 *Update Pom file to build jar file with dependencies.
 
-2.0.0 2023.04.06
+2.0.0 2023.04.06:
 *Replaced the MySQL and PostgreSQL DB support with SQLite which means that this version is incompatible with all previous versions.
 *Major code refactor and cleanup to target Java 17.
 *The GUI look and feel will now default to the system look and feel.
 
-1.19p 2010.03.07
+1.19p 2010.03.07:
 *Hack to keep receive thread from dribbling all over itself and quitting if the server replies with a 602.  Probably.
 
-1.19o 2010.02.16
+1.19o 2010.02.16:
 *Removed the external DB support for YEN tag.  Should work as before.
   TODO: Update SQL? commands to work with YEN tag in DB.java?  Will probably break previous databases's.
 
-1.19n 2009.10.12
+1.19n 2009.10.12:
 *Fix of username length & character restrictions
 
 1.19m 2009.09.29:
@@ -182,7 +189,7 @@ to time. Do at least check the changelog for relevant info before using it.
 -Fixed: infinite loop when 'Waiting/Add' and 'Add to mylist' unchecked thx to egg.
 -Change: switching between 'Renaming' and 'Moving' @ 'Rules' does now 'Apply'. (eh..)
 
-1.15 09.11.2005
+1.15 09.11.2005:
 -Removed 'E' in test. Added regexp test to 'P' (file path). Extensions can be tested here now.
 -Added test 'I' (Is defined). Checks whether a tag is defined or not. (E.g. I(%eng).)
 -Fixed job table bug when sorting is used.
@@ -193,7 +200,7 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added support for gzip (parser was broken).
 -Fixed some bugs thx to egg and neginegi.
 
-1.14 30.10.2005
+1.14 30.10.2005:
 -Cleanup. A lot of internal changes (in job handling / html parsing / data structures).
 -Added support for private/local mysql database.
 -Added support for path 'P', extension 'E' and genre 'N' in tests. Former 'E' (english title) is now included in 'A'.
@@ -203,12 +210,12 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added Pause, Restore name, Rehash, Identify, Add to mylist, Set Finished, Set Folder to job popup menu.
 -Changes in debug window.
 
-1.13 26.09.2005
+1.13 26.09.2005:
 -Change in Rule system. Scripting. Textfield instead of table.
 -Fixed two bugs in parsing code thx to egg.
 -Fixed padding for specials thx to egg.
 
-1.12 24.09.2005
+1.12 24.09.2005:
 -Added extra '0' padding in epnr when an anime serie got more than 99 episodes. Will only work when total num of eps is known.
 -Added support for dub language (D) and sub language (L) in tests.
 -Added support for NOT (!) in tests.
@@ -216,13 +223,13 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added support for hentai (needs to be enabled in profile: http://anidb.info/perl-bin/animedb.pl?show=profile).
 -Fixed some minor bugs.
 
-1.11 22.09.2005
+1.11 22.09.2005:
 -Fixed bug in rule system: Test 'A' did not work.
 -Fixed some minor bugs thx to hrm.
 -Added combobox 'Renaming' for selection of renaming mode.
 -Change in file handler: Will not try to add files that are locked (used by another process).
 
-1.10 15.09.2005
+1.10 15.09.2005:
 -Fixed bug where Job is not set to Finished (when rename/moving is enabled but not needed).
 -Fixed parsing bug. (Movies has parts, not episodes.)
 -Fixed minor gui bugs.
@@ -230,7 +237,7 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added updating of progress bar when checking crc (after move).
 -Added updating of second progress bar (total progress).
 
-1.09 09.09.2005
+1.09 09.09.2005:
 -Fixed rename bug when group is "raw/unknown" (gid=0). These are now just called "unknown".
 -Added possibility to save options.
 -Added new rule system: rename and move files based on file info.
@@ -242,11 +249,11 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added "Hash Dirs", "Browser Path" and "My Database" text fields.
 -Added Wiki button. (Works only on Windows systems, unless browser path is defined.)
 
-1.08 05.07.2005
+1.08 05.07.2005:
 -Updated mylist file states.
 -Updated file info parser (renamer was broken).
 
-1.07 12.06.2005
+1.07 12.06.2005:
 -Updated the second progress bar.
 -Changed comm. thread sleeping routine.
 -Changed file info dialog to a text dialog.
@@ -255,31 +262,31 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added debug tab.
 -Made 1.4.2 comp again thx to gyrojoe.
 
-1.06 29.05.2005
+1.06 29.05.2005:
 -Changed the way files are hashed and added to mylist. This is now done concurrent.
 -Changes in the status and logging system.
 -Fixed some minor bugs.
 
-1.05 14.05.2005
+1.05 14.05.2005:
 -Added custom renaming of files thx to ExElNeT.
 -Added some more checking on username and password.
 -Changes in option tab.
 
-1.04 11.05.2005
+1.04 11.05.2005:
 -Added extra file information thx to ExElNeT. Double click rows in 'Finished Files' to see.
 -Added offline mode
 -Fixed two bugs in file rename code. thx to ExElNeT and visnu
 
-1.03 19.02.2005
+1.03 19.02.2005:
 -Added extensive hashing. MD5, SHA-1 and CRC32
 -Changes in the error handler.
 -Bugfix: Applet crash with Opera and Firefox
 
-1.02 04.02.2005
+1.02 04.02.2005:
 -Added connection options.
 -Added connection check.
 
-1.01 30.01.2005
+1.01 30.01.2005:
 -New layout, options in own tab.
 -Added "Source" and "Other" string for AniDB file info.
 -Added possibility to save the log.
@@ -288,5 +295,5 @@ to time. Do at least check the changelog for relevant info before using it.
 -Added new filehandler.
 -Bugfix in AniDBConnection.
 
-1.00 23.01.2005
+1.00 23.01.2005:
 -First version.
