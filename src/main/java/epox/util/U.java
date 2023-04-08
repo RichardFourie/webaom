@@ -23,6 +23,7 @@ package epox.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -57,15 +58,17 @@ public class U {
     }
 
     public static String replace(String str, String src, String dst) {
+        String newStr = str == null ? "" : str;
         int ls = src.length();
         int ld = dst.length();
-        int i = str.indexOf(src);
+        int i = newStr.indexOf(src);
 
         while (i >= 0) {
-            str = str.substring(0, i) + dst + str.substring(i + ls);
-            i = str.indexOf(src, i + ld);
+            newStr = newStr.substring(0, i) + dst + newStr.substring(i + ls);
+            i = newStr.indexOf(src, i + ld);
         }
-        return str;
+
+        return newStr;
     }
 
     public static String getInTag(String str, String tag) {
@@ -237,23 +240,18 @@ public class U {
          */
     }
 
-    public static String fileToString(String path) {
+    public static String fileToString(String path) throws FileNotFoundException, IOException {
+        File f = new File(path);
 
-        try {
-            File f = new File(path);
+        if (!f.exists() || f.length() > 1024 * 1024) {
+            return null;
+        }
 
-            if (f.length() > 1024 * 1024) {
-                return null;
-            }
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f), (int) f.length());
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f), (int) f.length())) {
             byte buf[] = new byte[(int) f.length()];
             bis.read(buf);
-            bis.close();
             return new String(buf);
-        } catch (IOException e) {
-            // e.printStackTrace();
         }
-        return null;
     }
 
     public static String replaceCCCode(String s, HashMap<String, ?> m) {

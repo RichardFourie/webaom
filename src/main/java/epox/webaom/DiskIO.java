@@ -159,16 +159,15 @@ public class DiskIO implements Runnable {
         A.gui.jpb0.setValue(0);
 
         long t0 = System.currentTimeMillis();
-        InputStream in = new FileInputStream(file);
-
-        while (A.gui.dioOK() && (last_read = in.read(DiskIO.m_buf)) != -1) {
-            m_hc.update(DiskIO.m_buf, 0, last_read);
-            tot_read += last_read;
-            prog = (float) tot_read / len;
-            A.gui.jpb0.setValue((int) (1000 * prog));
+        try (InputStream in = new FileInputStream(file)) {
+            while (A.gui.dioOK() && (last_read = in.read(DiskIO.m_buf)) != -1) {
+                m_hc.update(DiskIO.m_buf, 0, last_read);
+                tot_read += last_read;
+                prog = (float) tot_read / len;
+                A.gui.jpb0.setValue((int) (1000 * prog));
+            }
         }
-        in.close();
-        m_hc.finalize();
+        m_hc.finalizeHashes();
         long t1 = System.currentTimeMillis();
         A.gui.jpb0.setValue(0);
 
@@ -284,23 +283,16 @@ public class DiskIO implements Runnable {
         long tot_read = 0, len = a.length();
         float prog = 0;
 
-        InputStream fi = new FileInputStream(a);
-        OutputStream fo = new FileOutputStream(b);
-
         A.gui.jpb0.setValue(0);
 
-        try {
-
+        try (InputStream fi = new FileInputStream(a); OutputStream fo = new FileOutputStream(b)) {
             while (A.gui.dioOK() && (num_read = fi.read(DiskIO.m_buf)) != -1) {
                 fo.write(DiskIO.m_buf, 0, num_read);
                 tot_read += num_read;
                 prog = (float) tot_read / len;
                 A.gui.jpb0.setValue((int) (1000 * prog));
             }
-            fo.close();
-            fi.close();
         } catch (IOException e) {
-
             if (DiskIO.S_OUTS.equals(e.getMessage())) {
                 A.dialog("IOException", DiskIO.S_OUTS + ":\n" + b);
             } else {
@@ -311,27 +303,20 @@ public class DiskIO implements Runnable {
     }
 
     private String fileCheck(File f) throws IOException {
-        Edonkey ed;
-
-        try {
-            ed = new Edonkey();
-        } catch (java.security.NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+        Edonkey ed = new Edonkey();
         int num_read;
         long tot_read = 0, len = f.length();
         float prog = 0;
-        InputStream in = new FileInputStream(f);
-        A.gui.jpb0.setValue(0);
+        try (InputStream in = new FileInputStream(f)) {
+            A.gui.jpb0.setValue(0);
 
-        while (A.gui.dioOK() && (num_read = in.read(DiskIO.m_buf)) != -1) {
-            ed.update(DiskIO.m_buf, 0, num_read);
-            tot_read += num_read;
-            prog = (float) tot_read / len;
-            A.gui.jpb0.setValue((int) (1000 * prog));
+            while (A.gui.dioOK() && (num_read = in.read(DiskIO.m_buf)) != -1) {
+                ed.update(DiskIO.m_buf, 0, num_read);
+                tot_read += num_read;
+                prog = (float) tot_read / len;
+                A.gui.jpb0.setValue((int) (1000 * prog));
+            }
         }
-        in.close();
 
         if (prog < 1) {
             return null;

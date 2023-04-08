@@ -81,7 +81,7 @@ public class A {
 
     public static final UserPass up = new UserPass(null, null, null);
 
-    public static void init() {
+    public static void init() throws Exception {
         // A.mem0 = A.getUsed();
         Thread.currentThread().setName("Main");
         A.jobs = new JobList();

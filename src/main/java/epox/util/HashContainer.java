@@ -50,9 +50,7 @@ public class HashContainer {
         }
     }
 
-    @Override
-    public void finalize() {
-
+    public void finalizeHashes() {
         for (int i = 0; i < size; i++) {
             ha[i] = ca[i].getHexValue();
             ca[i].reset();

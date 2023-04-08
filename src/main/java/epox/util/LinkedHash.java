@@ -25,13 +25,16 @@ package epox.util;
 
 import java.util.HashMap;
 
+import epox.util.LinkedHash.Node;
+import epox.webaom.Job;
+
 /**
  * Combined linked list and hash map. Fast and ordered.
  *
  * @author JV
  * @version 1
  */
-public class LinkedHash extends HashMap<Object, Object> {
+public class LinkedHash extends HashMap<Job, Node> {
     /**
      *
      */
@@ -43,7 +46,7 @@ public class LinkedHash extends HashMap<Object, Object> {
         head = tail = new Node(null, null);
     }
 
-    public boolean addLast(Object o) {
+    public boolean addLast(Job o) {
         Node n = new Node(o, tail);
 
         if (super.put(o, n) == null) {
@@ -54,11 +57,12 @@ public class LinkedHash extends HashMap<Object, Object> {
     }
 
     @Override
-    public Object remove(Object o) {
-        Node n = (Node) super.remove(o);
+    public Node remove(Object key) {
+        Node n = super.remove(key);
 
         if (n == null) {
-            System.out.println("! LinkedHash: Tried to remove non existing entry: " + o);
+            System.out.println("! LinkedHash: Tried to remove non existing entry: " + key);
+            return null;
         }
         n.prev.next = n.next;
 
@@ -85,7 +89,7 @@ public class LinkedHash extends HashMap<Object, Object> {
         return head.next.o;
     }
 
-    private class Node {
+    protected class Node {
         Node prev, next;
         Object o;
 
