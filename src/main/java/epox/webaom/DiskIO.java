@@ -68,10 +68,10 @@ public class DiskIO implements Runnable {
                     fileHash(j);
                     break;
                 case Job.MOVEWAIT:
-                    fileMove(j);
+                    DiskIO.fileMove(j);
                     break;
                 case Job.PARSEWAIT:
-                    fileParse(j);
+                    DiskIO.fileParse(j);
                     break;
                 default:
                     A.dialog("INF LOOP", "Illegal status: " + j.getStatusText());
@@ -84,15 +84,12 @@ public class DiskIO implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
 
-            if (j != null) {
-
-                if (j.m_fn != null) {
-                    A.deleteFileAndFolder(j.m_fn, DiskIO.mSfail);
-                }
-                JobMan.updateStatus(j, Job.FAILED);
-                j.setError(e.getMessage());
-                // A.gui.updateJobTable(j);
+            if (j.m_fn != null) {
+                A.deleteFileAndFolder(j.m_fn, DiskIO.mSfail);
             }
+            JobMan.updateStatus(j, Job.FAILED);
+            j.setError(e.getMessage());
+            // A.gui.updateJobTable(j);
 
             String msg = e.getMessage();
             A.gui.println(Hyper.error(msg));
@@ -107,8 +104,7 @@ public class DiskIO implements Runnable {
         A.gui.setEnabled_dio(true);
     }
 
-    private void fileParse(Job j) throws IOException {
-
+    private static void fileParse(Job j) throws IOException {
         if (!AVInfo.ok()) {
             JobMan.updateStatus(j, Job.FAILED);
             return;
@@ -134,7 +130,7 @@ public class DiskIO implements Runnable {
         av.close();
         long t1 = System.currentTimeMillis();
         A.gui.jpb0.setValue(1000);
-        A.gui.println("Parsed " + Hyper.name(file) + " @ " + stats(file.length(), (t1 - t0) / 1000f));
+        A.gui.println("Parsed " + Hyper.name(file) + " @ " + DiskIO.stats(file.length(), (t1 - t0) / 1000f));
         JobMan.updateStatus(j, Job.FINISHED);
         // A.gui.updateJobTable(j);
     }
@@ -159,16 +155,15 @@ public class DiskIO implements Runnable {
         A.gui.jpb0.setValue(0);
 
         long t0 = System.currentTimeMillis();
-        InputStream in = new FileInputStream(file);
-
-        while (A.gui.dioOK() && (last_read = in.read(DiskIO.m_buf)) != -1) {
-            m_hc.update(DiskIO.m_buf, 0, last_read);
-            tot_read += last_read;
-            prog = (float) tot_read / len;
-            A.gui.jpb0.setValue((int) (1000 * prog));
+        try (InputStream in = new FileInputStream(file)) {
+            while (A.gui.dioOK() && (last_read = in.read(DiskIO.m_buf)) != -1) {
+                m_hc.update(DiskIO.m_buf, 0, last_read);
+                tot_read += last_read;
+                prog = (float) tot_read / len;
+                A.gui.jpb0.setValue((int) (1000 * prog));
+            }
         }
-        in.close();
-        m_hc.finalize();
+        m_hc.finalizeHashes();
         long t1 = System.currentTimeMillis();
         A.gui.jpb0.setValue(0);
 
@@ -184,7 +179,7 @@ public class DiskIO implements Runnable {
             A.gui.printHash(link);
             A.gui.printHash(m_hc.toString());
 
-            A.gui.println("Hashed " + Hyper.name(file) + " @ " + stats(file.length(), (t1 - t0) / 1000f));
+            A.gui.println("Hashed " + Hyper.name(file) + " @ " + DiskIO.stats(file.length(), (t1 - t0) / 1000f));
             JobMan.updateStatus(j, Job.HASHED);
         } else {
             JobMan.updateStatus(j, Job.HASHWAIT);
@@ -192,8 +187,7 @@ public class DiskIO implements Runnable {
         }
     }
 
-    private void fileMove(Job j) throws IOException {
-
+    private static void fileMove(Job j) throws IOException {
         if (j.m_fc.equals(j.m_fn)) {
             j.m_fn = null;
             JobMan.updateStatus(j, Job.MOVED);
@@ -229,7 +223,7 @@ public class DiskIO implements Runnable {
         long t0 = System.currentTimeMillis();
         boolean copy = !j.m_fn.exists();
 
-        if (copy && !fileCopy(j.m_fc, j.m_fn)) {
+        if (copy && !DiskIO.fileCopy(j.m_fc, j.m_fn)) {
             A.deleteFileAndFolder(j.m_fn, DiskIO.mSabrt);
             JobMan.updateStatus(j, Job.MOVEWAIT);
             // A.gui.updateJobTable(j);
@@ -239,7 +233,7 @@ public class DiskIO implements Runnable {
         JobMan.updateStatus(j, Job.MOVECHECK);
         // A.gui.updateJobTable(j);
         A.gui.status0("Checking " + j.m_fc.getName());
-        String sum = fileCheck(j.m_fn);
+        String sum = DiskIO.fileCheck(j.m_fn);
 
         if (sum == null) {// canceled
 
@@ -252,7 +246,7 @@ public class DiskIO implements Runnable {
             }
         } else if (j._ed2.equalsIgnoreCase(sum)) {
             A.gui.println("Moved " + Hyper.name(j.m_fc) + " to " + Hyper.name(j.m_fn) + " @ "
-                    + stats(j.m_fc.length(), (System.currentTimeMillis() - t0) / 1000f));
+                    + DiskIO.stats(j.m_fc.length(), (System.currentTimeMillis() - t0) / 1000f));
             A.deleteFileAndFolder(j.m_fc, DiskIO.mSsucc);
             JobMan.setJobFile(j, j.m_fn);
             j.m_fn = null;
@@ -274,33 +268,26 @@ public class DiskIO implements Runnable {
         // A.gui.updateJobTable(j);
     }
 
-    private String stats(long len, float time) {
+    private static String stats(long len, float time) {
         return Hyper.number(DiskIO._DF.format(len / time / 1048576)) + " MB/s (" + Hyper.number(len + "") + " bytes in "
                 + Hyper.number(DiskIO._DF.format(time)) + " seconds)";
     }
 
-    private boolean fileCopy(File a, File b) throws IOException {
+    private static boolean fileCopy(File a, File b) throws IOException {
         int num_read;
         long tot_read = 0, len = a.length();
         float prog = 0;
 
-        InputStream fi = new FileInputStream(a);
-        OutputStream fo = new FileOutputStream(b);
-
         A.gui.jpb0.setValue(0);
 
-        try {
-
+        try (InputStream fi = new FileInputStream(a); OutputStream fo = new FileOutputStream(b)) {
             while (A.gui.dioOK() && (num_read = fi.read(DiskIO.m_buf)) != -1) {
                 fo.write(DiskIO.m_buf, 0, num_read);
                 tot_read += num_read;
                 prog = (float) tot_read / len;
                 A.gui.jpb0.setValue((int) (1000 * prog));
             }
-            fo.close();
-            fi.close();
         } catch (IOException e) {
-
             if (DiskIO.S_OUTS.equals(e.getMessage())) {
                 A.dialog("IOException", DiskIO.S_OUTS + ":\n" + b);
             } else {
@@ -310,28 +297,21 @@ public class DiskIO implements Runnable {
         return prog == 1;
     }
 
-    private String fileCheck(File f) throws IOException {
-        Edonkey ed;
-
-        try {
-            ed = new Edonkey();
-        } catch (java.security.NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static String fileCheck(File f) throws IOException {
+        Edonkey ed = new Edonkey();
         int num_read;
         long tot_read = 0, len = f.length();
         float prog = 0;
-        InputStream in = new FileInputStream(f);
-        A.gui.jpb0.setValue(0);
+        try (InputStream in = new FileInputStream(f)) {
+            A.gui.jpb0.setValue(0);
 
-        while (A.gui.dioOK() && (num_read = in.read(DiskIO.m_buf)) != -1) {
-            ed.update(DiskIO.m_buf, 0, num_read);
-            tot_read += num_read;
-            prog = (float) tot_read / len;
-            A.gui.jpb0.setValue((int) (1000 * prog));
+            while (A.gui.dioOK() && (num_read = in.read(DiskIO.m_buf)) != -1) {
+                ed.update(DiskIO.m_buf, 0, num_read);
+                tot_read += num_read;
+                prog = (float) tot_read / len;
+                A.gui.jpb0.setValue((int) (1000 * prog));
+            }
         }
-        in.close();
 
         if (prog < 1) {
             return null;

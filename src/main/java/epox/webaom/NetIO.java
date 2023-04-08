@@ -41,8 +41,7 @@ public class NetIO implements Runnable {
         AConE ac = A.gui.getConnection();
 
         if (ac.connect()) {
-
-            if (ping(ac)) {
+            if (NetIO.ping(ac)) {
                 A.conn = ac;
 
                 try {
@@ -79,7 +78,7 @@ public class NetIO implements Runnable {
 
                 try {
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (@SuppressWarnings("unused") Exception e) {
                     /* don't care */}
                 A.gui.status1(NetIO.S_TERM);
             }
@@ -108,7 +107,6 @@ public class NetIO implements Runnable {
     }
 
     private void cleanCurrentJob(String err) {
-
         if (m_job != null) {
             m_job.mSe = err;
             JobMan.updateStatus(m_job, Job.FAILED);
@@ -122,23 +120,20 @@ public class NetIO implements Runnable {
 
         if (A.conn.login()) {
             A.gui.nioEnable(true);
-
             do {
                 m_job = A.jobs.getJobNio();
 
                 if (m_job != null) {
-
                     // !A.nr_nio = m_job.mIid;
                     if (m_job.getStatus() == Job.REMWAIT) {
-                        remove(m_job);
+                        NetIO.remove(m_job);
                     } else {
-
                         if (m_job.getStatus() == Job.IDENTWAIT) {
-                            identify(m_job);
+                            NetIO.identify(m_job);
                         }
 
                         if (A.gui.nioOK() && m_job.getStatus() == Job.ADDWAIT) {
-                            mylistAdd(m_job);
+                            NetIO.mylistAdd(m_job);
                         }
                     }
                     // A.gui.updateJobTable(m_job);
@@ -153,13 +148,12 @@ public class NetIO implements Runnable {
         }
     }
 
-    private void remove(Job j) throws AConEx {
+    private static void remove(Job j) throws AConEx {
         JobMan.updateStatus(j, Job.REMING);
         // A.gui.updateJobTable(j);
         A.gui.status1("Removing from mylist: " + j.getFile());
 
         if (j.mIlid > 0) {
-
             if (A.conn.removeFromMylist(j.mIlid, j.getFile().getName())) {
                 j.mIlid = 0;
                 A.gui.println("Removed " + Hyper.name(j.getFile()));
@@ -174,7 +168,7 @@ public class NetIO implements Runnable {
         JobMan.updateStatus(j, Job.FAILED);
     }
 
-    private void identify(Job j) throws AConEx {
+    private static void identify(Job j) throws AConEx {
         JobMan.updateStatus(j, Job.IDENTIFYING);
         // A.gui.updateJobTable(j);
         A.gui.status1("Retrieving file data for " + j.getFile().getName());
@@ -198,7 +192,6 @@ public class NetIO implements Runnable {
                 JobMan.updateStatus(j, Job.UNKNOWN);
             }
         } else {
-
             if (j.m_fa.group == null) {
                 j.m_fa.group = (Group) A.cache.get(j.m_fa.gid, DB.I_G);
             }
@@ -214,7 +207,7 @@ public class NetIO implements Runnable {
         }
     }
 
-    private void mylistAdd(Job j) throws AConEx {
+    private static void mylistAdd(Job j) throws AConEx {
         JobMan.updateStatus(j, Job.ADDING);
         // A.gui.updateJobTable(j);
         A.gui.status1("Adding " + j.getFile() + " to your list...");
@@ -227,12 +220,11 @@ public class NetIO implements Runnable {
         JobMan.updateStatus(j, Job.ADDED);
     }
 
-    public boolean ping(ACon ac) {
-
+    public static boolean ping(ACon ac) {
         try {
             A.gui.println("AniDB is reachable. Received reply in " + Hyper.number("" + ac.enCrypt()) + " ms.");
             return true;
-        } catch (java.net.SocketTimeoutException e) {
+        } catch (@SuppressWarnings("unused") java.net.SocketTimeoutException e) {
             String str = "AniDB is not reachable.";
             A.gui.println(Hyper.error(str));
             A.gui.status1(str);
@@ -245,6 +237,7 @@ public class NetIO implements Runnable {
             A.gui.msg(e.getMessage());
         }
         A.gui.println("Check out the connection options or try again later.");
+
         return false;
     }
 }

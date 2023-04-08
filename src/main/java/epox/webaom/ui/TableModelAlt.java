@@ -36,7 +36,7 @@ import epox.webaom.data.Base;
 import epox.webaom.data.Ep;
 import epox.webaom.data.Path;
 
-public class TableModelAlt extends AbstractTreeTableModel implements TreeTableModel {
+public class TableModelAlt extends AbstractTreeTableModel {
     public static final int NAME = 0, PRCT = 1, LAST = 2, TYPE = 3, YEAR = 4, NUMB = 5, SIZE = 6;
     static protected String[] cNames = { "Name", "%", "M", "Type", "Year", "Number", "Size" };
     static protected Class<?>[] cTypes = { TreeTableModel.class, String.class, Character.class, Integer.class,
@@ -69,6 +69,8 @@ public class TableModelAlt extends AbstractTreeTableModel implements TreeTableMo
             switch (c) {
             case SIZE:
                 return U.sbyte(g.mLs);
+            default:
+                break;
             }
         }
 
@@ -123,16 +125,17 @@ public class TableModelAlt extends AbstractTreeTableModel implements TreeTableMo
             };
         }
         U.err("AnimeModel: Unknown object: " + node);
+
         return null;
     }
 
     @Override
     public Object getChild(Object parent, int index) {
-
         if (parent instanceof Base) {
             return ((Base) parent).get(index);
         }
         U.err(parent);
+
         return null;
     }
 
@@ -146,10 +149,10 @@ public class TableModelAlt extends AbstractTreeTableModel implements TreeTableMo
 
     @Override
     public boolean isLeaf(Object node) {
-
         if (node instanceof AFile) {
             return true;
         }
+
         return false;
     }
 

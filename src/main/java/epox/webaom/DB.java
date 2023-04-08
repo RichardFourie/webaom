@@ -23,6 +23,7 @@
 package epox.webaom;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -63,7 +64,7 @@ public class DB {
         exec("delete from etb", false);
     }
 
-    private void _exception(Exception e) {
+    private static void _exception(Exception e) {
         e.printStackTrace();
     }
 
@@ -121,7 +122,7 @@ public class DB {
             try {
                 con.close();
             } catch (SQLException e) {
-                // don't care
+                e.printStackTrace();
             }
         }
 
@@ -171,7 +172,7 @@ public class DB {
                 con.close();
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
         mBinitd = false;
     }
@@ -179,9 +180,7 @@ public class DB {
     private boolean _updateDef() {
         boolean silent = false;
 
-        try {
-            ResultSet rs = query("select ver from vtb;", true);
-
+        try (ResultSet rs = query("select ver from vtb;", true)) {
             if (rs == null) {
                 _execStr(A.getFileString("db00.sql"), silent);
             }
@@ -251,7 +250,7 @@ public class DB {
 
                 if (e.getErrorCode() != 1062) {
                     _out("! DB Error Code: " + e.getErrorCode());
-                    _exception(e);
+                    DB._exception(e);
                 } else {
                     _out("{ DUPE!");
                 }
@@ -287,7 +286,7 @@ public class DB {
 
                 if (e.getErrorCode() != 1062) {
                     _out("! DB Error Code: " + e.getErrorCode());
-                    _exception(e);
+                    DB._exception(e);
                 } else {
                     _out("{ DUPE!");
                 }
@@ -296,8 +295,8 @@ public class DB {
         }
     }
 
-    private int fill(int i, PreparedStatement ps, int id, Object o, boolean u) throws SQLException {
-
+    private void fill(PreparedStatement ps, int id, Object o, boolean u) throws SQLException {
+        int i = 1;
         if (o instanceof Anime a) {
             ps.setString(i++, a.rom);
             ps.setString(i++, a.kan);
@@ -340,7 +339,6 @@ public class DB {
             ps.setString(i++, g.sname);
             ps.setInt(i++, id);
         } else if (o instanceof Job j) {
-
             if (j.mIdid < 1) {
                 j.mIdid = getDid(j.m_fc.getParent());
             }
@@ -366,120 +364,113 @@ public class DB {
                 ps.setString(i, j.mSo);
             }
         }
-        return i;
     }
 
     private int getDid(String path) {
-
         if (!mBinitd) {
             return -1;
         }
 
-        if (path == null) {
-            path = "";
-        }
-
         try {
-            path = U.replace(path, "\\", "\\\\");
-            Integer did = m_hmd.get(path);
+            String escapedPath = U.replace(path, "\\", "\\\\");
+            Integer did = m_hmd.get(escapedPath);
 
             if (did != null) {
                 return did.intValue();
             }
-            ResultSet rs = query("select did from dtb where name=\"" + path + "\"", false);
 
-            if (rs.next()) {
-                did = Integer.valueOf(rs.getInt(1));
-                m_hmd.put(path, did);
-                return did;
+            try (ResultSet rs = query("select did from dtb where name=\"" + escapedPath + "\"", false)) {
+                if (rs.next()) {
+                    did = rs.getInt(1);
+                    m_hmd.put(escapedPath, did);
+                    return did;
+                }
             }
-            _out("} insert into dtb (name) values (\"" + path + "\")");
-            stmt.executeUpdate("insert into dtb (name) values (\"" + path + "\")");
-            rs = stmt.getGeneratedKeys();
 
-            if (rs.next()) {
-                did = Integer.valueOf(rs.getInt(1));
-                m_hmd.put(path, did);
-                return did;
+            _out("} insert into dtb (name) values (\"" + escapedPath + "\")");
+            stmt.executeUpdate("insert into dtb (name) values (\"" + escapedPath + "\")");
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    did = Integer.valueOf(rs.getInt(1));
+                    m_hmd.put(escapedPath, did);
+                    return did;
+                }
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
+
         return -1;
     }
 
     public synchronized Base getGeneric(int id, int t) {
-
         if (!mBinitd) {
             return null;
         }
 
         try {
-
             if (t == DB.I_E) {
                 Ep ae = new Ep(id);
-                ResultSet rs = query("select english,kanji,romaji,number from etb where eid=" + id + ";", false);
+                try (ResultSet rs = query("select english,kanji,romaji,number from etb where eid=" + id + ";", false)) {
+                    if (rs.next()) {
+                        ae.eng = rs.getString(1);
+                        ae.kan = rs.getString(2);
+                        ae.rom = rs.getString(3);
+                        ae.num = rs.getString(4).intern();
+                        _out("{ " + ae);
 
-                if (rs.next()) {
-                    ae.eng = rs.getString(1);
-                    ae.kan = rs.getString(2);
-                    ae.rom = rs.getString(3);
-                    ae.num = rs.getString(4).intern();
-                    _out("{ " + ae);
-                    return ae;
+                        return ae;
+                    }
                 }
             } else if (t == DB.I_G) {
                 Group ag = new Group(id);
-                ResultSet rs = query("select name,short from gtb where gid=" + id + ";", false);
+                try (ResultSet rs = query("select name,short from gtb where gid=" + id + ";", false)) {
+                    if (rs.next()) {
+                        ag.name = rs.getString(1);
+                        ag.sname = rs.getString(2);
+                        _out("{ " + ag);
 
-                if (rs.next()) {
-                    ag.name = rs.getString(1);
-                    ag.sname = rs.getString(2);
-                    _out("{ " + ag);
-                    return ag;
+                        return ag;
+                    }
                 }
             } else if (t == DB.I_A) {
-                ResultSet rs = query(
+                try (ResultSet rs = query(
                         "select episodes,last_ep,year,type,romaji,kanji,english,genre,img from atb where aid=" + id
                                 + ";",
-                        false);
+                        false)) {
+                    if (rs.next()) {
+                        int i = 1;
+                        String s[] = new String[9];
+                        s[0] = "" + id;
 
-                if (rs.next()) {
-                    int i = 1;
-                    String s[] = new String[9];
-                    s[0] = "" + id;
+                        for (int j = 1; j < s.length; j++) {
+                            s[i] = rs.getString(i++);
+                        }
+                        Anime a = new Anime(s);
+                        _out("{ " + a);
 
-                    for (int j = 1; j < s.length; j++) {
-                        s[i] = rs.getString(i++);
+                        return a;
                     }
-                    Anime a = new Anime(s);
-                    _out("{ " + a);
-                    return a;
                 }
             }
+
             return null;
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
+
             return null;
         }
     }
 
     public synchronized int getJob(Job j, boolean ed) {
-
         if (!mBinitd) {
             return -1;
         }
 
-        try {
-            ResultSet rs;
-
-            if (ed) {
-                rs = query(DB.sqjob + " and j.size=" + j.m_fc.length() + " and j.ed2k=" + s(j._ed2) + ";", false);
-            } else {
-                int did = getDid(j.m_fc.getParent());
-                rs = query(DB.sqjob + " and j.size=" + j.m_fc.length() + " and j.name=" + s(j.m_fc.getName())
-                        + " and j.did=" + did + ";", false);
-            }
+        try (ResultSet rs = query(ed ? DB.sqjob + " and j.size=" + j.m_fc.length() + " and j.ed2k=" + DB.s(j._ed2) + ";"
+                : DB.sqjob + " and j.size=" + j.m_fc.length() + " and j.name=" + DB.s(j.m_fc.getName()) + " and j.did="
+                        + getDid(j.m_fc.getParent()) + ";",
+                false)) {
 
             if (rs.next()) {
                 int i = 1;
@@ -488,81 +479,76 @@ public class DB {
                 if (j.m_fc.equals(j.m_fn)) {
                     j.m_fn = null;
                 }
+
                 int status = rs.getInt(i++);
                 // j.setStatus(rs.getInt(i++), false);
-                mkJob(rs, i, j);
+                DB.mkJob(rs, i, j);
                 j.mBf = false;
                 _out("{ Job found: " + j + ":" + status);
+
                 return status;
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
+
         return -1;
     }
 
     public synchronized void getJobs() {
-
         if (!mBinitd) {
             return;
         }
 
-        try {
+        try (ResultSet rs = query(mBallj ? DB.sqjob + " ORDER BY j.time"
+                : DB.sqjob + " and j.status!=" + Job.FINISHED + " ORDER BY j.time", false)) {
             Job j;
-            ResultSet rs;
-
-            if (mBallj) {
-                // rs = query(sqjob+" order by RAND() LIMIT 100", false);
-                // rs = query(sqjob+" AND f.aid=2165", false);
-                rs = query(DB.sqjob + " ORDER BY j.time", false);
-            } else {
-                rs = query(DB.sqjob + " and j.status!=" + Job.FINISHED + " ORDER BY j.time", false);
-            }
 
             while (rs.next()) {
                 int i = 1;
                 File f = new File(rs.getString(i++) + File.separatorChar + rs.getString(i++));
                 // if(!f.exists()||f.getParent().startsWith("I:")) continue;
                 j = new Job(f, rs.getInt(i++));
-                mkJob(rs, i, j);
+                DB.mkJob(rs, i, j);
 
                 if (!A.jobs.add(j)) {
                     U.err("DB: Dupe: " + j);
                 }
             }
         } catch (SQLException e) {
-            _exception(e);
+            DB._exception(e);
         }
     }
 
-    private void mkJob(ResultSet rs, int i, Job j) throws SQLException {
-        j.mSo = rs.getString(i++);
-        j._ed2 = rs.getString(i++);
-        j._md5 = rs.getString(i++);
-        j._sha = rs.getString(i++);
-        j._tth = rs.getString(i++);
-        j._crc = rs.getString(i++);
-        j.mLs = rs.getLong(i++);
-        j.mIdid = rs.getInt(i++);
-        i++;// j.mIuid = rs.getInt(i++);
-        j.mIlid = rs.getInt(i++);
-        String xml = rs.getString(i++);
+    private static void mkJob(ResultSet rs, int i, Job j) throws SQLException {
+        int index = i;
+        j.mSo = rs.getString(index++);
+        j._ed2 = rs.getString(index++);
+        j._md5 = rs.getString(index++);
+        j._sha = rs.getString(index++);
+        j._tth = rs.getString(index++);
+        j._crc = rs.getString(index++);
+        j.mLs = rs.getLong(index++);
+        j.mIdid = rs.getInt(index++);
+        index++;// j.mIuid = rs.getInt(i++);
+        j.mIlid = rs.getInt(index++);
+        String xml = rs.getString(index++);
 
         if (xml != null && xml.length() > 0) {
-
             try {
                 j.m_fi = new FileInfo(xml);
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
                 j.m_fi = null;
             }
         }
-        int fid = rs.getInt(i);
+        int fid = rs.getInt(index);
 
         if (fid > 0) {
             String s[] = new String[20];
 
             for (int x = 0; x < 20; x++) {
-                s[x] = rs.getString(i++);
+                s[x] = rs.getString(index++);
             }
 
             if (s[18] == null || s[18].length() < 1) {
@@ -579,22 +565,18 @@ public class DB {
             s = new String[5];
 
             for (int x = 0; x < s.length; x++) {
-                s[x] = rs.getString(i++);
+                s[x] = rs.getString(index++);
             }
             A.cache.add(new Ep(s), 0, DB.I_E);
         }
     }
 
     public synchronized boolean removeJob(Job j) {
-        return exec("delete from jtb where ed2k=" + s(j._ed2) + " and name=" + s(j.m_fc.getName()) + ";", false);
+        return exec("delete from jtb where ed2k=" + DB.s(j._ed2) + " and name=" + DB.s(j.m_fc.getName()) + ";", false);
     }
 
-    private String s(String s) {
-
-        if (s == null) {
-            return "NULL";
-        }
-        return "\"" + s + "\"";
+    private static String s(String s) {
+        return s == null ? "NULL" : "\"" + s + "\"";
     }
 
     public synchronized boolean update(int id, Object o, int typ) {
@@ -602,7 +584,6 @@ public class DB {
     }
 
     private boolean update2(int id, Object o, int typ, int ply) {
-
         try {
             return update1(id, o, typ);
         } catch (SQLException e) {
@@ -612,42 +593,41 @@ public class DB {
                 return update2(id, o, typ, ply - 1);
             }
         }
+
         return false;
     }
 
     private boolean update1(int id, Object o, int typ) throws SQLException {
-
         if (!mBinitd) {
             return false;
         }
 
         try {
-            fill(1, psu[typ], id, o, false);
+            fill(psu[typ], id, o, false);
 
             if (update(psu[typ]) > 0) {
                 return true;
             }
         } catch (SQLException e) {
-
             if (DB.comex(e.getMessage())) {
                 throw e;
             }
-            _exception(e);
+            DB._exception(e);
         }
 
         try {
-            fill(1, psi[typ], id, o, true);
+            fill(psi[typ], id, o, true);
 
             if (update(psi[typ]) > 0) {
                 return true;
             }
         } catch (SQLException e) {
-
             if (DB.comex(e.getMessage())) {
                 throw e;
             }
-            _exception(e);
+            DB._exception(e);
         }
+
         return false;
     }
 
@@ -665,6 +645,7 @@ public class DB {
             }
         }
         _out("} " + str);
+
         return ps.executeUpdate();
     }
 }

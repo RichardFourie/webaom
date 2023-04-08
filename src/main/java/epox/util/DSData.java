@@ -48,21 +48,14 @@ public class DSData {
         if (sel.booleanValue()) {
             return src + Options.S_SEP + d;
         }
-        return "#" + src + Options.S_SEP + d;
 
+        return "#" + src + Options.S_SEP + d;
     }
 
     public static DSData parse(String s0, String s1) {
         boolean b = s0.startsWith("#");
 
-        if (b) {
-            s0 = s0.substring(1);
-        }
-
-        if ("\\0".equals(s1)) {
-            s1 = "";
-        }
-        return new DSData(s0, s1, !b);
+        return new DSData(b ? s0.substring(1) : s0, "\\0".equals(s1) ? "" : s1, !b);
     }
 
     public static String encode(ArrayList<DSData> mVill) {
@@ -74,6 +67,7 @@ public class DSData {
                 s.append(ds).append(Options.S_SEP);
             }
         }
+
         return s.toString();
     }
 
@@ -84,6 +78,7 @@ public class DSData {
         while (st.hasMoreTokens()) {
             mVill.add(DSData.parse(st.nextToken(), st.nextToken()));
         }
+
         return s;
     }
 }

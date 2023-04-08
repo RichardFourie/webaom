@@ -61,21 +61,20 @@ public class Ep extends Base {
 
     @Override
     public int compareTo(Object obj) {
-
         if (obj instanceof Ep e) {
-
             /* if(mBs==e.mBs) */try {
                 int a = Integer.parseInt(num);
                 int b = Integer.parseInt(e.num);
                 // if(a==b) return english.compareTo(e.english);
                 return a - b;
-            } catch (Exception x) {
+            } catch (@SuppressWarnings("unused") Exception x) {
                 return num.compareTo(((Ep) obj).num);
             }
             /*
              * if(mBs&&!e.mBs) return -1; return 1;
              */
         }
+
         return super.compareTo(obj);
     }
 }

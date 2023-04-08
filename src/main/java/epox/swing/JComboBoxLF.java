@@ -46,7 +46,7 @@ public class JComboBoxLF extends JComboBox<String> {
 
         int i;
         for (i = 0; i < JComboBoxLF.lf.length; i++) {
-            if (DEFAULT_LOOK_AND_FEEL.equals(JComboBoxLF.lf[i].getClassName())) {
+            if (JComboBoxLF.DEFAULT_LOOK_AND_FEEL.equals(JComboBoxLF.lf[i].getClassName())) {
                 break;
             }
         }

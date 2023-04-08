@@ -34,6 +34,7 @@ public class JTableJobs extends JTableSortable implements DropTargetListener, Ke
     private static final long serialVersionUID = 8151757579007898894L;
     private TableModelJobs m_jlm;
 
+    @SuppressWarnings("unused")
     public JTableJobs(TableModelJobs jlm) {
         super(jlm);
         m_jlm = jlm;
@@ -95,6 +96,7 @@ public class JTableJobs extends JTableSortable implements DropTargetListener, Ke
     private boolean isSelected(int row) {
         int[] a = getSelectedRows();
         Arrays.sort(a);
+
         return Arrays.binarySearch(a, row) >= 0;
     }
 
@@ -134,14 +136,13 @@ public class JTableJobs extends JTableSortable implements DropTargetListener, Ke
 
     @Override
     public void drop(DropTargetDropEvent dtde) {
-
         try {
             Transferable t = dtde.getTransferable();
 
             if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 dtde.acceptDrop(DnDConstants.ACTION_COPY);
 
-                if (paste(t)) {
+                if (JTableJobs.paste(t)) {
                     dtde.getDropTargetContext().dropComplete(true);
                 }
             } else {
@@ -160,10 +161,9 @@ public class JTableJobs extends JTableSortable implements DropTargetListener, Ke
 
     @Override
     public void keyPressed(KeyEvent e) {
-
         // System.err.println(e.getKeyCode()+" "+e.isControlDown());
         if (e.getKeyCode() == 86 && e.isControlDown()) {
-            paste(Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null));
+            JTableJobs.paste(Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null));
             e.consume();
         }
     }
@@ -174,20 +174,20 @@ public class JTableJobs extends JTableSortable implements DropTargetListener, Ke
     }
 
     @SuppressWarnings("unchecked")
-    private boolean paste(Transferable t) {
-
+    private static boolean paste(Transferable t) {
         if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-
             try {
                 List<File> l = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
                 File f[] = (File[]) l.toArray();
                 Arrays.sort(f);
                 A.gui.select(f);
+
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
         return false;
     }
 }

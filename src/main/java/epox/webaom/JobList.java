@@ -85,7 +85,6 @@ public class JobList {
     }
 
     public synchronized void filter(int status, int state, boolean unk) {
-
         if (status == 0) {
             m_fl = null;
             return;
@@ -113,8 +112,7 @@ public class JobList {
     }
 
     public synchronized Job add(File f) {
-
-        if (m_hs.add(f)) {// TODO if update then check against existing files
+        if (m_hs.add(f)) {
             Job j = new Job(f, Job.HASHWAIT);
             int status = A.db.getJob(j, false);
 
@@ -123,54 +121,59 @@ public class JobList {
                 j.setStatus(status, false);
             }
             add_0(j);
+
             return j;
         }
+
         return null;
     }
 
     public synchronized boolean add(Job j) {
-
         if (m_hs.add(j.m_fc)) {
             add_0(j);
+
             return true;
         }
+
         return false;
     }
 
     public synchronized Job get(int i) {
-
         try {
-
             if (m_fl != null) {
                 return m_fl[i];
             }
+
             return m_al.get(i);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") ArrayIndexOutOfBoundsException e) {
             // e.printStackTrace();
             System.err.println("[ ArrayIndexOutOfBoundsException " + i);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     public synchronized Job rem(int i) {
         Job j = m_al.remove(i);
         m_hs.remove(j.getFile());
+
         return j;
     }
 
     public synchronized Job[] array() {
         Job[] a = new Job[m_al.size()];
         m_al.toArray(a);
+
         return a;
     }
 
     public synchronized int size() {
-
         if (m_fl != null) {
             return m_fl.length;
         }
+
         return m_al.size();
     }
 
@@ -191,7 +194,6 @@ public class JobList {
     }
 
     public void updateQueues(Job j, int os, int ns) {
-
         synchronized (m_lh) {
             updateHashSets(j, os, false); // remove from set
             updateHashSets(j, ns, true); // add to set
@@ -199,7 +201,6 @@ public class JobList {
     }
 
     private void updateHashSets(Job j, int status, boolean add) {
-
         if (status < 0) {
             return;
         }

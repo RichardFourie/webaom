@@ -41,7 +41,6 @@ public class HeaderListener extends MouseAdapter {
     }
 
     public void setMask(long mask) {
-
         if (m_c != null) {
             m_pop = new JPopupMenu();
 
@@ -53,7 +52,6 @@ public class HeaderListener extends MouseAdapter {
             }
 
             for (int i = m_c.getColumnCount() - 1; i >= 0; i--) {
-
                 if ((1l << i & mask) != 1 << i) {
                     m_c.removeColumn(m_c.getColumn(i));
                 }
@@ -74,7 +72,6 @@ public class HeaderListener extends MouseAdapter {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             if (b.isSelected()) {
                 m.addColumn(c);
             } else if (m.getColumnCount() > 1) {
@@ -87,14 +84,13 @@ public class HeaderListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
         if (e.getButton() == MouseEvent.BUTTON1) {
             int c = m_h.columnAtPoint(e.getPoint());
             int s = m_h.getTable().convertColumnIndexToModel(c);
 
             try {
                 ((TableModelSortable) m_h.getTable().getModel()).sortByColumn(s);
-            } catch (Exception x) {
+            } catch (@SuppressWarnings("unused") Exception x) {
                 // don't care
             }
         } else if (m_pop != null) {
@@ -104,7 +100,6 @@ public class HeaderListener extends MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
         if (e.getButton() == MouseEvent.BUTTON1) {
             int col = m_h.columnAtPoint(e.getPoint());
             m_r.setPressedColumn(col);
@@ -118,7 +113,6 @@ public class HeaderListener extends MouseAdapter {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
         if (e.getButton() == MouseEvent.BUTTON1) {
             m_r.setPressedColumn(-1);
             m_h.repaint();

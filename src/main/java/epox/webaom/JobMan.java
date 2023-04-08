@@ -26,9 +26,7 @@ import java.io.File;
 
 public class JobMan {
     public static void setPath(Job job, String path, boolean parent) {
-
         synchronized (job) {
-
             if (job.check(Job.S_DOING)) {
                 return;
             }
@@ -47,7 +45,6 @@ public class JobMan {
                 job.find(file);
                 A.db.update(0, job, DB.I_J);
             } else if (JobMan.updatePath(job, file)) {
-
                 if (job.m_fn != null) {
                     status = Job.MOVEWAIT;
                 } else {
@@ -60,9 +57,7 @@ public class JobMan {
     }
 
     public static void setName(Job job, String s) {
-
         synchronized (job) {
-
             if (job.check(Job.S_DOING)) {
                 return;
             }
@@ -83,7 +78,6 @@ public class JobMan {
     }
 
     public static void c_watch(Job job) {
-
         if (!job.getFile().exists()) {
             return;
         }
@@ -97,7 +91,6 @@ public class JobMan {
     }
 
     public static void c_expl(Job job) {
-
         if (!job.getFile().exists()) {
             return;
         }
@@ -111,7 +104,6 @@ public class JobMan {
     }
 
     public static void c_avdump(Job job) {
-
         if (!job.getFile().exists()) {
             return;
         }
@@ -128,10 +120,9 @@ public class JobMan {
         JobMan.updateStatus(job, status, false);
     }
 
+    @SuppressWarnings("fallthrough")
     public static void updateStatus(Job job, int status, boolean chck) {
-
         synchronized (job) {
-
             if (chck && job.check(Job.S_DOING)) {
                 return;
             }
@@ -247,12 +238,13 @@ public class JobMan {
     }
 
     public static boolean updatePath(Job job) {
-
         if (job.incompl()) {
             job.setError("Extensive fileinfo not available.");
             A.gui.println(job.m_fc + " cannot be renamed: Extensive fileinfo not available.");
+
             return false;
         }
+
         return JobMan.updatePath(job, A.rules.apply(job));
     }
 
@@ -268,10 +260,10 @@ public class JobMan {
         boolean normal = true;
 
         if (job.m_fc.equals(f)) {
-
             if (job.m_fc.getName().equals(f.getName())) { // win case sens
                 return true;
             }
+
             normal = false;
         }
         String sf0 = Hyper.name(job.m_fc);
@@ -281,19 +273,21 @@ public class JobMan {
         if (!job.m_fc.exists()) {
             job.setError("File does not exist.");
             A.gui.println(sf0 + " cannot be moved. File not found.");
+
             return false;
         }
 
 //DESTINATION FILE HEALTHY?
         if (normal && f.exists()) {
-
             if (job.m_fc.length() == f.length()) { // could be the same
                 job.m_fn = f;
                 A.gui.println(sf0 + " will be moved to " + sf1 + " later.");
+
                 return true;
             }
             job.setError("File cannot be moved. Destination file already exists!");
             A.gui.println(sf0 + " cannot be moved to " + sf1 + ": Destination file already exists!");
+
             return false;
         }
 //DESTINATION FOLDER OK?
@@ -302,6 +296,7 @@ public class JobMan {
         if (!parent.exists() && !parent.mkdirs()) {
             job.setError("Folder " + parent + " cannot be created!");
             A.gui.println("Folder " + parent + " cannot be created!");
+
             return false;
         }
         A.jobs.addPath(f);
@@ -312,21 +307,22 @@ public class JobMan {
         String sok = "Cleanup after successful rename operation.";
 
         if (p0.charAt(1) == ':' || p1.charAt(1) == ':') { // windows (not network)
-
             if (p0.charAt(0) == p1.charAt(0)) {
-
                 if (job.m_fc.renameTo(f)) {
                     JobMan.moveSub(job.m_fc, f);
                     A.deleteFile(job.m_fc.getParentFile(), sok);
                     JobMan.setJobFile(job, f);
                     A.gui.println("Renamed " + sf0 + " to " + sf1);
+
                     return true;
                 }
                 A.gui.println(Hyper.error("Renaming failed!") + " (" + sf0 + " to " + sf1 + ")");
+
                 return false;
             }
             job.m_fn = f;
             A.gui.println(sf0 + " will be moved to " + sf1 + " later.");
+
             return true;
         }
 
@@ -335,16 +331,17 @@ public class JobMan {
             A.deleteFile(job.m_fc.getParentFile(), sok);
             JobMan.setJobFile(job, f);
             A.gui.println("Renamed" + sf0 + " to " + sf1);
+
             return true;
         }
         job.m_fn = f;
         A.gui.println(sf0 + " will be moved to " + sf1 + " later.");
+
         return true;
 //THE END
     }
 
     public static void setJobFile(Job j, File f) {
-
         if (Cache.mImode == Cache.I_MAFF) {
             A.cache.treeRemove(j);
             j.m_fc = f;
@@ -379,6 +376,7 @@ public class JobMan {
 
     private static String changeExt(File f, String ext) {
         String path = f.getAbsolutePath();
+
         return path.substring(0, 1 + path.lastIndexOf('.')) + ext;
     }
 }

@@ -37,7 +37,6 @@ import epox.swing.MySwing;
 public class WebAOM {
 
     public static void main(String[] args) {
-
         try {
             WebAOM.mmain();
         } catch (Exception e) {
@@ -47,7 +46,7 @@ public class WebAOM {
         }
     }
 
-    private static void mmain() {
+    private static void mmain() throws Exception {
         WebAOM.setMyFont(new Font("Tahoma", Font.PLAIN, 11), new Font("Times", Font.PLAIN, 11));
 
         JFrame jf = new JFrame("WebAOM " + A.S_VER + " Loading...");

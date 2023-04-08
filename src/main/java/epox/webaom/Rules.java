@@ -73,16 +73,14 @@ public class Rules {
         mSren = s;
     }
 
-    private String replaceOldTags(String s) {
-        s = U.replace(s, "%year", "%yea");
-        s = U.replace(s, "%type", "%typ");
-        s = U.replace(s, "%qual", "%qua");
-        return U.replace(s, "%ed2k", "%ed2");
+    private static String replaceOldTags(String s) {
+        return U.replace(U.replace(U.replace(U.replace(s, "%year", "%yea"), "%type", "%typ"), "%qual", "%qua"), "%ed2k",
+                "%ed2");
     }
 
     public void optl(Options o) {
-        mSren = replaceOldTags(o.getS(Options.S_VRLSREN));
-        mSmov = replaceOldTags(o.getS(Options.S_VRLSMOV));
+        mSren = Rules.replaceOldTags(o.getS(Options.S_VRLSREN));
+        mSmov = Rules.replaceOldTags(o.getS(Options.S_VRLSMOV));
         DSData.decode(mVill, o.getS(Options.S_REPLSYS));
     }
 
@@ -93,7 +91,6 @@ public class Rules {
     }
 
     public File apply(Job j) {
-
         if (j == null || j.m_fa == null) {
             return null;
         }
@@ -132,13 +129,12 @@ public class Rules {
         }
 
         File f = new File(abs);
-
         System.out.println("% New file: " + f);
+
         return f;
     }
 
     private String get(Job j, String str) {
-
         try {
             ArrayList<Section> v = build(str, j);
 
@@ -154,6 +150,7 @@ public class Rules {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -172,23 +169,24 @@ public class Rules {
                 continue;
             }
 
-            if (tup.startsWith("DO ") && handle(schema, tok.substring(3))) {
+            if (tup.startsWith("DO ") && Rules.handle(schema, tok.substring(3))) {
                 break;
             } else if (tup.startsWith("IF ") && (prev = check(tok.substring(3, (i = tup.indexOf(" DO "))), j))
-                    && handle(schema, tok.substring(i + 4))) {
+                    && Rules.handle(schema, tok.substring(i + 4))) {
                 break;
             } else if (tup.startsWith("ELSE IF ") && !prev
                     && (prev = check(tok.substring(8, (i = tup.indexOf(" DO "))), j))
-                    && handle(schema, tok.substring(i + 4))) {
+                    && Rules.handle(schema, tok.substring(i + 4))) {
                 break;
-            } else if (tup.startsWith("ELSE DO ") && !prev && handle(schema, tok.substring(8))) {
+            } else if (tup.startsWith("ELSE DO ") && !prev && Rules.handle(schema, tok.substring(8))) {
                 break;
             }
         }
+
         return schema;
     }
 
-    private boolean handle(ArrayList<Section> sch, String op) throws Exception {
+    private static boolean handle(ArrayList<Section> sch, String op) throws Exception {
         String up = op.toUpperCase();
 
         if (up.startsWith("ADD ")) {
@@ -225,13 +223,12 @@ public class Rules {
         if (up.startsWith("ASSUME ")) {
 
             try {
-
                 if (up.startsWith("ASSUME SPECIAL ")) {
                     A.ASSP = U.i(up.substring(15).trim());
                 } else {
                     A.ASNO = U.i(up.substring(7).trim());
                 }
-            } catch (NumberFormatException e) {
+            } catch (@SuppressWarnings("unused") NumberFormatException e) {
                 A.dialog("NumberFormatException", "Parsing '" + op + "' failed.");
             }
             return false;
@@ -249,6 +246,7 @@ public class Rules {
             return false;
         }
         sch.clear();
+
         throw new Exception("Error after DO: Expected SET/ADD/FAIL/FINISH/TRUNCATE<int,str>: " + op);
     }
 
@@ -272,7 +270,7 @@ public class Rules {
         return b;
     }
 
-    private int findEndPar(String s, int start) {
+    private static int findEndPar(String s, int start) {
         int level = 0;
         char c;
 
@@ -295,7 +293,7 @@ public class Rules {
     private boolean check1(String s, Job j) throws Exception {
         char c = Character.toUpperCase(s.charAt(0));
         int x = s.indexOf('(') + 1;
-        int y = findEndPar(s, x);// s.indexOf(')', x);
+        int y = Rules.findEndPar(s, x);// s.indexOf(')', x);
 
         if (x < 1 || y < 0) {
             throw new Exception("Missing ( or ): " + s);
@@ -323,6 +321,7 @@ public class Rules {
         return false;
     }
 
+    @SuppressWarnings("unused")
     private boolean check0(char c, String s, Job j) {
 
         switch (Character.toUpperCase(c)) {
@@ -432,60 +431,64 @@ public class Rules {
     }
 
     private String fin(Job j, String s) {
-        s = s.replace(File.separatorChar, '\1').replace(':', '\2');
-        s = Rules.truncate(j.convert(s));
-        s = Rules.replace(s, mVill);
-        s = s.replace('\1', File.separatorChar).replace('\2', ':');
+        String fin = s.replace(File.separatorChar, '\1').replace(':', '\2');
+        fin = Rules.truncate(j.convert(fin));
+        fin = Rules.replace(fin, mVill);
+        fin = fin.replace('\1', File.separatorChar).replace('\2', ':');
 
-        if (s.endsWith("_")) {
-            s = s.substring(0, s.length() - 1);
-            s = s.replace(' ', '_');
+        if (fin.endsWith("_")) {
+            fin = fin.substring(0, fin.length() - 1);
+            fin = fin.replace(' ', '_');
         }
-        return s;
+
+        return fin;
     }
 
     private static String replace(String s, ArrayList<DSData> v) {
+        String newS = s;
 
         for (DSData ds : v) {
-
             if (ds.sel.booleanValue()) {
-                s = U.replace(s, ds.src, ds.dst);
+                newS = U.replace(newS, ds.src, ds.dst);
             }
         }
-        return s;
+
+        return newS;
     }
 
     private static String truncate(String s) {
+        String newS = s;
 
         try {
             String t;
-            int x = s.indexOf(Rules.TRUNC), y, z, i;
+            int x = newS.indexOf(Rules.TRUNC), y, z, i;
 
             while (x > 0) {
-                y = s.indexOf('>', x);
+                y = newS.indexOf('>', x);
 
                 if (y < x) {
                     break;
                 }
-                z = s.indexOf(',', x);
+                z = newS.indexOf(',', x);
 
                 if (z < x || z > y) {
                     break;
                 }
-                i = U.i(s.substring(x + Rules.TRUNC.length(), z));
-                t = s.substring(z + 1, y);
+                i = U.i(newS.substring(x + Rules.TRUNC.length(), z));
+                t = newS.substring(z + 1, y);
 
                 if (x > i + t.length()) {
-                    s = s.substring(0, i - t.length()) + t + s.substring(y + 1);
+                    newS = newS.substring(0, i - t.length()) + t + newS.substring(y + 1);
                 } else {
-                    s = s.substring(0, x) + s.substring(y + 1);
+                    newS = newS.substring(0, x) + newS.substring(y + 1);
                 }
-                x = s.indexOf(Rules.TRUNC);
+                x = newS.indexOf(Rules.TRUNC);
             }
         } catch (NumberFormatException e) {
             System.err.println(e);
         }
-        return s;
+
+        return newS;
     }
 }
 
@@ -495,19 +498,20 @@ class Section {
     int max = 255;
 
     public Section(String s) {
-        int i = s.indexOf(" WEIGHT ");
+        String newS = s;
+        int i = newS.indexOf(" WEIGHT ");
 
         if (i >= 0) {
-            str = s.substring(0, i);
-            s = s.substring(i + 8).trim();
-            i = s.indexOf(':');
+            str = newS.substring(0, i);
+            newS = newS.substring(i + 8).trim();
+            i = newS.indexOf(':');
 
             if (i >= 0) {
-                w = Float.parseFloat(s.substring(0, i));
-                max = Integer.parseInt(s.substring(i + 1));
+                w = Float.parseFloat(newS.substring(0, i));
+                max = Integer.parseInt(newS.substring(i + 1));
             }
         } else {
-            str = s;
+            str = newS;
         }
         i = str.indexOf('\'');
         int j = str.lastIndexOf('\'');

@@ -35,6 +35,7 @@ import epox.util.UserPass;
 import epox.webaom.data.Base;
 import epox.webaom.net.AConE;
 import epox.webaom.net.AConS;
+import epox.webaom.ui.JFrameHtml;
 import epox.webaom.ui.JPanelMain;
 
 /*
@@ -51,7 +52,7 @@ public class A {
      * System.out.println((mem1-mem0)/1048576f+"\t"+(mem2-mem1)/1048576f+"\t"+(mem3-
      * mem2)/1048576f+"\t"+(mem4-mem3)/1048576f+"\t"+(mem5)/1048576f); }
      */
-    public static final String S_WEB = "anidb.net", S_VER = "2.0.1 (2023-04-06)", S_N = "\r\n";
+    public static final String S_WEB = "anidb.net", S_VER = "2.1.0 (2023-04-08)", S_N = "\r\n";
     public static String fschema, dir = null, preg = null/* "^.*$" */, font = "";
     public static int ASNO = 99, ASSP = 99;
 
@@ -81,7 +82,7 @@ public class A {
 
     public static final UserPass up = new UserPass(null, null, null);
 
-    public static void init() {
+    public static void init() throws Exception {
         // A.mem0 = A.getUsed();
         Thread.currentThread().setName("Main");
         A.jobs = new JobList();
@@ -108,7 +109,6 @@ public class A {
     }
 
     public static boolean shutdown(boolean opx) {
-
         if (opx) {
             Options o = new Options();
 
@@ -116,11 +116,9 @@ public class A {
                 A.gui.opts(o);
 
                 if (!A.opt.equals(o)) {
-
                     if (o.getB(Options.B_AUTOSAV)) {
                         o.save();
                     } else {
-
                         switch (A.yes_no_cancel("The options has changed", "Do you want to save them?")) {
                         case 0:
                             o.save();
@@ -128,6 +126,8 @@ public class A {
                         case -1:
                         case 2:
                             return false;
+                        default:
+                            break;
                         }
                     }
                 }
@@ -141,19 +141,19 @@ public class A {
     }
 
     public static void setFont(String f) {
-        int i = f.lastIndexOf(','), size = 11;
+        String newF = f;
+        int i = newF.lastIndexOf(','), size = 11;
 
         if (i > 0) {
-
             try {
-                String s = f.substring(i + 1);
-                f = f.substring(0, i).trim();
+                String s = newF.substring(i + 1);
+                newF = newF.substring(0, i).trim();
                 size = Integer.parseInt(s);
-            } catch (NumberFormatException e) {
+            } catch (@SuppressWarnings("unused") NumberFormatException e) {
                 //
             }
         }
-        Font fo = new Font(f, Font.PLAIN, size);
+        Font fo = new Font(newF, Font.PLAIN, size);
         WebAOM.setMyFont(fo, fo);
         SwingUtilities.updateComponentTreeUI(A.gui);
         SwingUtilities.updateComponentTreeUI(A.com0);
@@ -165,7 +165,7 @@ public class A {
     }
 
     public static void dialog2(String title, String msg) {
-        new epox.webaom.ui.JFrameHtml(title, msg);
+        new JFrameHtml(title, msg).setVisible(true);
     }
 
     public static boolean confirm(String title, String msg, String pos, String neg) {
@@ -185,9 +185,7 @@ public class A {
     }
 
     public static String getFileString(String name) {
-
-        try {
-            InputStream is = WebAOM.class.getClassLoader().getResourceAsStream(name);
+        try (InputStream is = WebAOM.class.getClassLoader().getResourceAsStream(name)) {
             StringBuilder str = new StringBuilder();
             int buf_size = 1024;
             byte buffer[] = new byte[buf_size];
@@ -196,6 +194,7 @@ public class A {
             while ((read = is.read(buffer, 0, buf_size)) > 0) {
                 str.append(new String(buffer, 0, read));
             }
+
             return str.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,7 +208,6 @@ public class A {
     }
 
     public static void deleteFile(File f, String s) {
-
         if (f.delete()) {
             System.out.println("$ Deleted " + f + " (" + s + ")");
         }

@@ -87,15 +87,12 @@ public class TableModelDS extends AbstractTableModel {
             rd = data.get(row);// !
         }
 
-        switch (col) {
-        case SEL:
-            return rd.sel;
-        case SRC:
-            return rd.src;
-        case DST:
-            return rd.dst;
-        }
-        return null;
+        return switch (col) {
+        case SEL -> rd.sel;
+        case SRC -> rd.src;
+        case DST -> rd.dst;
+        default -> null;
+        };
     }
 
     @Override
@@ -116,7 +113,6 @@ public class TableModelDS extends AbstractTableModel {
         }
 
         if (rd != null) {
-
             switch (col) {
             case SEL:
                 if (rd.src.length() > 0) {
@@ -132,6 +128,8 @@ public class TableModelDS extends AbstractTableModel {
             case DST:
                 rd.dst = getString(obj);
                 break;
+            default:
+                break;
             }
         }
     }
@@ -140,26 +138,22 @@ public class TableModelDS extends AbstractTableModel {
         String str = (String) o;
 
         for (DSData rd : data) {
-
             if (rd.src.equals(str)) {
                 return "";
             }
         }
+
         return str;
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-
-        switch (columnIndex) {
-        case SEL:
-            return "Enabled";
-        case SRC:
-            return stitle0;
-        case DST:
-            return stitle1;
-        }
-        return "No such column!";
+        return switch (columnIndex) {
+        case SEL -> "Enabled";
+        case SRC -> stitle0;
+        case DST -> stitle1;
+        default -> "No such column!";
+        };
     }
 
     public static void formatTable(JTable table) {

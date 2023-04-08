@@ -36,9 +36,12 @@ import javax.swing.JTextField;
 
 import epox.swing.JComboBoxLF;
 import epox.util.HashContainer;
-import epox.util.TTH;
 import epox.webaom.A;
 import epox.webaom.Options;
+import jonelo.jacksum.algorithm.Crc32;
+import jonelo.jacksum.algorithm.Edonkey;
+import jonelo.jacksum.algorithm.MD;
+import jonelo.jacksum.algorithm.MDTigerTree;
 
 public class JPanelOptDiv extends JPanel {
     /**
@@ -212,23 +215,23 @@ public class JPanelOptDiv extends JPanel {
             nr = 0;
 
             if (cbHsh[JPanelOptDiv.H_EDK].isSelected()) {
-                hc.add(nr++, "ed2k", new jonelo.jacksum.algorithm.Edonkey());
+                hc.add(nr++, "ed2k", new Edonkey());
             }
 
             if (cbHsh[JPanelOptDiv.H_CRC].isSelected()) {
-                hc.add(nr++, "crc32", new jonelo.jacksum.algorithm.Crc32());
+                hc.add(nr++, "crc32", new Crc32());
             }
 
             if (cbHsh[JPanelOptDiv.H_MD5].isSelected()) {
-                hc.add(nr++, "md5", new com.twmacinta.util.MD5());
+                hc.add(nr++, "md5", new MD("MD5"));
             }
 
             if (cbHsh[JPanelOptDiv.H_SHA].isSelected()) {
-                hc.add(nr++, "sha1", new jonelo.jacksum.algorithm.MD("SHA-1"));
+                hc.add(nr++, "sha1", new MD("SHA-1"));
             }
 
             if (cbHsh[JPanelOptDiv.H_TTH].isSelected()) {
-                hc.add(nr++, "tth", new TTH());
+                hc.add(nr++, "tth", new MDTigerTree());
             }
             return hc;
         } catch (java.security.NoSuchAlgorithmException e) {

@@ -57,7 +57,6 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
         items = new JMenuItem[JPopupMenuM.iCommands];
 
         for (int i = 0; i < JPopupMenuM.iCommands; i++) {
-
             if (JPopupMenuM.separator(i)) {
                 this.addSeparator();
             } else {
@@ -70,10 +69,9 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
     }
 
     public void stop() {
-
         try {
             worker.run = false;
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             // don't care
         }
     }
@@ -88,7 +86,6 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
 
     @Override
     public void mousePressed(MouseEvent e) {
-
         if (jt instanceof JTableJobs) {
             ((JTableJobs) jt).upd = false;
         }
@@ -96,7 +93,6 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
         if (jt instanceof JTableJobs) {
             ((JTableJobs) jt).upd = true;
         }
@@ -104,7 +100,6 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
         if (worker == null && (e.getModifiersEx() & InputEvent.META_DOWN_MASK) == InputEvent.META_DOWN_MASK) {
             items[JPopupMenuM.REMOVE_DB].setEnabled(A.db._ok());
             items[JPopupMenuM.PARSE].setEnabled(AVInfo.ok());
@@ -115,7 +110,6 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (jt.getSelectedRowCount() > 0) {
             worker = new MenuWorker(Integer.parseInt(e.getActionCommand()));
         }
@@ -134,10 +128,9 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
         @Override
         public void run() {
             ie: if (JPopupMenuM.single(cmd)) {
-
                 try {
                     commandSingle(cmd, jlm.getJobs(jt.getSelectedRow())[0]);
-                } catch (ArrayIndexOutOfBoundsException e) {
+                } catch (@SuppressWarnings("unused") ArrayIndexOutOfBoundsException e) {
                     //
                 }
             } else {
@@ -163,29 +156,27 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
     }
 
     void command(int cmd, Job[] rows, String arg) {
-
         if (rows.length < 1) {
             return;
         }
 
+        String newArg = arg;
         if (cmd == JPopupMenuM.EDIT_PATH) {
-            arg = new JTextInputDialog(A.frame, "Edit path", rows[0].getFile().getParent()).getStr();
+            newArg = new JTextInputDialog(A.frame, "Edit path", rows[0].getFile().getParent()).getStr();
 
-            if (arg == null || arg.length() < 2) {
+            if (newArg == null || newArg.length() < 2) {
                 return;
             }
         }
 
         for (Job row : rows) {
-
             if (row != null) {
-                command0(cmd, row, arg);
+                command0(cmd, row, newArg);
             }
         }
     }
 
     void command0(int cmd, Job j, String arg) {
-
         switch (cmd) {
         case PAUSE:
             JobMan.updateStatus(j, Job.H_PAUSED, true);
@@ -233,11 +224,12 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
         case PARSE:
             JobMan.updateStatus(j, Job.PARSEWAIT, true);
             break;
+        default:
+            break;
         }
     }
 
     void commandSingle(int cmd, Job j) {
-
         switch (cmd) {
         case SHOW_INFO:
             JobMan.showInfo(j);
@@ -259,6 +251,8 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
                 // jlm.updateRow(j);
             }
             break;
+        default:
+            break;
         }
     }
 
@@ -274,8 +268,10 @@ public class JPopupMenuM extends JPopupMenu implements MouseListener, ActionList
 
         if (option == JFileChooser.APPROVE_OPTION) {
             dir = fc.getSelectedFile().getAbsolutePath();
+
             return dir;
         }
+
         return null;
     }
 

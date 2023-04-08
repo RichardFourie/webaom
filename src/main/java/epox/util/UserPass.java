@@ -38,30 +38,29 @@ public class UserPass {
     }
 
     public void set(String s) {
-
         try {
             String a[] = U.split(s, ':');
             usr = a[0];
             psw = UserPass.dec(a[1]);
             key = UserPass.dec(a[2]);
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             //
         }
     }
 
     public String get(boolean sp) {
-
         if (!sp) {
             return usr;
         }
+
         return usr + ":" + UserPass.nne(psw) + ":" + UserPass.nne(key);
     }
 
     private static String nne(String s) {
-
         if (s == null || s.length() < 1) {
             return "";
         }
+
         return UserPass.enc(s);
     }
 
@@ -77,23 +76,21 @@ public class UserPass {
     }
 
     private static String enc(String p) {
-
         try {
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(UserPass.envk(), "AES"));
             return Base32.encode(c.doFinal(p.getBytes()));
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return null;
         }
     }
 
     private static String dec(String p) {
-
         try {
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(UserPass.envk(), "AES"));
             return new String(c.doFinal(Base32.decode(p)));
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             return null;
         }
     }

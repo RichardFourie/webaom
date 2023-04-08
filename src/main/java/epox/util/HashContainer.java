@@ -44,15 +44,12 @@ public class HashContainer {
     }
 
     public void update(byte[] buffer, int offset, int length) {
-
         for (int i = 0; i < size; i++) {
             ca[i].update(buffer, offset, length);
         }
     }
 
-    @Override
-    public void finalize() {
-
+    public void finalizeHashes() {
         for (int i = 0; i < size; i++) {
             ha[i] = ca[i].getHexValue();
             ca[i].reset();
@@ -75,13 +72,12 @@ public class HashContainer {
     }
 
     public String getHex(String name) {
-
         for (int i = 0; i < size; i++) {
-
             if (na[i].equalsIgnoreCase(name)) {
                 return ha[i];
             }
         }
+
         return null;
     }/*
       * private void reset(){ for(int i=0; i<size; i++){ hasht[i].reset(); } }

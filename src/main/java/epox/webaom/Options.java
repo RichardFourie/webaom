@@ -50,44 +50,39 @@ public class Options {
     }
 
     public boolean equals(Options o) {
-
         for (int i = 0; i < Options.B_LEN; i++) {
-
             if (mBa[i] != o.mBa[i]) {
                 return false;
             }
         }
 
         for (int i = 0; i < Options.I_LEN; i++) {
-
             if (mIa[i] != o.mIa[i]) {
                 return false;
             }
         }
 
         for (int i = 0; i < Options.S_LEN; i++) {
-
-            if (!strcmp(mSa[i], o.mSa[i])) {
+            if (!Options.strcmp(mSa[i], o.mSa[i])) {
                 return false;
             }
         }
+
         return true;
     }
 
-    private boolean strcmp(String a, String b) {
-        return a == null && b == null || a != null && b != null && a.equals(b) || a.length() == 0 && b == null;
+    private static boolean strcmp(String a, String b) {
+        return a == null && b == null || a != null && b != null && a.equals(b)
+                || a != null && a.length() == 0 && b == null;
     }
 
     public void save() {
-
         if (!onDisk() && !A.confirm("Warning", "Options will be stored here:\n" + path(), "Continue", "Cancel")) {
             return;
         }
 
-        try {
-            FileOutputStream fo = new FileOutputStream(m_file);
+        try (FileOutputStream fo = new FileOutputStream(m_file)) {
             fo.write(enc().getBytes("utf8"));
-            fo.close();
             System.out.println("$ File written:" + m_file);
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,13 +90,11 @@ public class Options {
     }
 
     public boolean load() {
-
         if (!onDisk()) {
             return false;
         }
 
-        try {
-            FileInputStream fw = new FileInputStream(m_file);
+        try (FileInputStream fw = new FileInputStream(m_file)) {
             int len = (int) m_file.length(), off = 0, read;
             byte[] buffer = new byte[len];
 
@@ -109,14 +102,15 @@ public class Options {
                 read = fw.read(buffer, off, len - off);
                 off += read;
             } while (read > 0);
-            fw.close();
             System.out.println("$ File read:" + m_file);
+
             return dec(new String(buffer, "utf8"));
         }
         // catch(IOException e){e.printStackTrace();}
         catch (Exception e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -134,6 +128,7 @@ public class Options {
             return true;
         }
         System.out.println("! Options file is outdated. Could not load.");
+
         return false;
     }
 
@@ -167,6 +162,7 @@ public class Options {
         for (int i = 0; i < Options.B_LEN; i++) {
             bool.append(mBa[i] ? '1' : '0');
         }
+
         return bool.toString();
     }
 
@@ -184,6 +180,7 @@ public class Options {
         for (int i = 0; i < Options.I_LEN; i++) {
             ints.append(mIa[i]).append(Options.S_SEP);
         }
+
         return ints.toString();
     }
 
@@ -232,5 +229,4 @@ public class Options {
             S_USRNAME = 0, S_HOSTURL = 1, S_MYDBURL = 2, S_HASHDIR = 3, S_BROWSER = 4, S_EXTENSN = 5, S_SOURCEF = 6,
             S_STORAGE = 7, S_OTHERIN = 8, S_VRLSREN = 9, S_VRLSMOV = 10, S_REPLSYS = 11, S_HTMLCOL = 12, S_LOGFILE = 13,
             S_PATHREG = 14, S_FONTSTR = 15, S_LOGHEAD = 16, S_JOBCOLS = 17, S_LEN = 18;
-
 }

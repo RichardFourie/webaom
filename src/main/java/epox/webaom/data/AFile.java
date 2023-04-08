@@ -91,10 +91,10 @@ public class AFile extends Base {
 
     @Override
     public String toString() {
-
         if (job != null) {
             return job.getFile().getName();
         }
+
         return def;
     }
 
@@ -147,61 +147,60 @@ public class AFile extends Base {
         dub = dub.intern();
     }
 
-    private String url0(String str, boolean non) {
-
+    private static String url0(String str, boolean non) {
         if (non) {
             return "http://" + A.S_WEB + "/perl-bin/animedb.pl?" + str + "&nonav=1";
         }
+
         return "http://" + A.S_WEB + "/perl-bin/animedb.pl?" + str;
     }
 
-    private String url1(String str) {
-        return url0("show=" + str, true);
+    private static String url1(String str) {
+        return AFile.url0("show=" + str, true);
     }
 
     public String urlAnime() {
-        return url1("anime&aid=" + aid);
+        return AFile.url1("anime&aid=" + aid);
     }
 
     public String urlExport() {
-        return url1("ed2kexport&h=1&aid=" + aid);
+        return AFile.url1("ed2kexport&h=1&aid=" + aid);
     }
 
     public String urlEp() {
-        return url1("ep&aid=" + aid + "&eid=" + eid);
+        return AFile.url1("ep&aid=" + aid + "&eid=" + eid);
     }
 
     public String urlFile() {
-        return url1("file&aid=" + aid + "&eid=" + eid + "&fid=" + fid);
+        return AFile.url1("file&aid=" + aid + "&eid=" + eid + "&fid=" + fid);
     }
 
     public String urlGroup() {
-        return url1("group&gid=" + gid);
+        return AFile.url1("group&gid=" + gid);
     }
 
     public String urlMylistE(int i) {
-
         if (i < 2) {
             return urlMylist();
         }
-        return url1("mylist&do=add&aid=" + aid + "&eid=" + eid + "&fid=" + fid + "&lid=" + i);
+
+        return AFile.url1("mylist&do=add&aid=" + aid + "&eid=" + eid + "&fid=" + fid + "&lid=" + i);
     }
 
     public String urlMylist() {
-
         try {
-            return url1("mylist&expand=" + aid + "&char=" + anime.rom.charAt(0) + "#a" + aid);
-        } catch (Exception e) {
-            return url1("mylist");
+            return AFile.url1("mylist&expand=" + aid + "&char=" + anime.rom.charAt(0) + "#a" + aid);
+        } catch (@SuppressWarnings("unused") Exception e) {
+            return AFile.url1("mylist");
         }
     }
 
     public String urlYear() {
-
         try {
-            return url0("do.search=%20Start%20Search%20&show=search&noalias=1&search.anime.year=" + anime.yea, false);
-        } catch (Exception e) {
-            return url1("search");
+            return AFile.url0("do.search=%20Start%20Search%20&show=search&noalias=1&search.anime.year=" + anime.yea,
+                    false);
+        } catch (@SuppressWarnings("unused") Exception e) {
+            return AFile.url1("search");
         }
     }
 
@@ -210,7 +209,7 @@ public class AFile extends Base {
 
     ///
     public boolean inYear(String s) {
-        s.replaceAll(" ", "");
+        s.replace(" ", "");
         int i = s.indexOf('-');
 
         if (i > 0) { // Range
@@ -222,8 +221,10 @@ public class AFile extends Base {
                 end = start;
                 start = t;
             }
+
             return anime.yea >= start && anime.yea <= end;
         }
+
         return anime.yea == Integer.parseInt(s);
     }
 
@@ -249,15 +250,14 @@ public class AFile extends Base {
     }
 
     public String getInvalid() {
-
         if ((stt & AFile.F_CRCERR) == AFile.F_CRCERR) {
             return "invalid crc";
         }
+
         return "";
     }
 
     public String mds() {
-
         if (anime == null || ep == null) {
             return "N/A";
         }
@@ -299,7 +299,6 @@ public class AFile extends Base {
     }
 
     public String mda() {
-
         if (anime == null || ep == null) {
             return "N/A";
         }
