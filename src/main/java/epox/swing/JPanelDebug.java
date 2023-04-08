@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import epox.util.U;
 import epox.webaom.A;
@@ -51,6 +52,7 @@ public class JPanelDebug extends JPanel {
     protected boolean log_file = false;
     protected Updater updater;
 
+    @SuppressWarnings("resource")
     public JPanelDebug(String file, boolean out, boolean err, boolean echo_out, boolean echo_err) {
         super(new java.awt.BorderLayout());
         jta = new JTextArea();
@@ -72,17 +74,14 @@ public class JPanelDebug extends JPanel {
             perr = System.err;
             pout = System.out;
 
-            WinStream errstream = new WinStream(os, echo_err, perr);
-            WinStream outstream = new WinStream(os, echo_out, pout);
-
             if (err) {
-                System.setErr(errstream);
+                System.setErr(new WinStream(os, echo_err, perr));
             }
 
             if (out) {
-                System.setOut(outstream);
+                System.setOut(new WinStream(os, echo_out, pout));
             }
-        } catch (FileNotFoundException e) {
+        } catch (@SuppressWarnings("unused") FileNotFoundException e) {
             jta.append("Could not openfile" + file);
         }
         updater = new Updater();
@@ -118,19 +117,16 @@ public class JPanelDebug extends JPanel {
             t1 = System.currentTimeMillis();
 
             if (str == "\n") {
-
                 if (!newl) {
                     jta.append("\n");
                 }
                 newl = true;
                 t0 = t1;
-
             } else {
                 String pre = "[" + U.time() + "|" + JPanelDebug.nf.format((float) (t1 - t0) / 1000) + "] "
                         + Thread.currentThread().getName() + ": ";
 
                 if (str.indexOf('\n') < 0) {
-
                     if (newl) {
                         jta.append(pre);
                     }
@@ -140,7 +136,6 @@ public class JPanelDebug extends JPanel {
                     String arg[] = U.split(str, '\n');
 
                     for (String element : arg) {
-
                         if (newl) {
                             jta.append(pre);
                         }
@@ -152,13 +147,12 @@ public class JPanelDebug extends JPanel {
             }
 
             if (jta.isVisible()) {
-                javax.swing.SwingUtilities.invokeLater(updater);
+                SwingUtilities.invokeLater(updater);
             }
         }
 
         @Override
         public void print(boolean x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -171,7 +165,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(char x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -184,7 +177,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(int x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -197,7 +189,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(long x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -210,7 +201,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(float x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -223,7 +213,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(double x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -236,7 +225,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(char x[]) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -249,28 +237,24 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void print(String x) {
-
-            if (x == null) {
-                x = "null";
-            }
+            String newX = x == null ? "null" : x;
 
             if (echo) {
-                pecho.print(/* Thread.currentThread().getName()+": "+ */x);
+                pecho.print(/* Thread.currentThread().getName()+": "+ */newX);
             }
 
             if (log_file) {
-                super.print(x);
+                super.print(newX);
             }
 
-            if (x.endsWith("\n")) {
+            if (newX.endsWith("\n")) {
                 newl = true;
             }
-            append(x);
+            append(newX);
         }
 
         @Override
         public void print(Object x) {
-
             if (echo) {
                 pecho.print(x);
             }
@@ -283,7 +267,6 @@ public class JPanelDebug extends JPanel {
 
         @Override
         public void println() {
-
             if (echo) {
                 pecho.println();
             }

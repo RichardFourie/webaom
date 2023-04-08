@@ -24,7 +24,6 @@
 package epox.webaom.ui;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -44,7 +43,7 @@ import epox.util.U;
 import epox.webaom.A;
 import epox.webaom.Hyper;
 
-public class JEditorPaneLog extends JEditorPane implements Log, Action, ActionListener {
+public class JEditorPaneLog extends JEditorPane implements Log, Action {
     /**
      *
      */
@@ -60,7 +59,6 @@ public class JEditorPaneLog extends JEditorPane implements Log, Action, ActionLi
     }
 
     public synchronized void append(String t) {
-
         try {
             Document doc = getDocument();
             int len = doc.getLength();
@@ -89,27 +87,27 @@ public class JEditorPaneLog extends JEditorPane implements Log, Action, ActionLi
 
         try {
             ps.print(line.toString());
-        } catch (NullPointerException e) {
+        } catch (@SuppressWarnings("unused") NullPointerException e) {
             // don't care
         }
     }
 
     public boolean openLogFile(String path) {
-
         try {
             ps = new PrintStream(new AppendFileStream(path), true, "utf8");
+
             return true;
         } catch (IOException e) {
             A.dialog("Log Error", e.getMessage());
+
             return false;
         }
     }
 
     public void closeLogFile() {
-
         try {
             ps.close();
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             // don't care
         }
     }
@@ -169,7 +167,6 @@ public class JEditorPaneLog extends JEditorPane implements Log, Action, ActionLi
     }
 
     public void setHeader(String h) {
-
         if (h == null || h.length() < 1) {
             return;
         }

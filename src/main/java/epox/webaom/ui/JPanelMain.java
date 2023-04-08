@@ -140,12 +140,11 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
                     element.setName("GUI");
                 }
             }
-        } catch (Exception e) {
+        } catch (@SuppressWarnings("unused") Exception e) {
             /* don't care */}
     }
 
     public void startup() {
-
         if (jpOdiv.autoLog()) {
             startLog();
         }
@@ -174,9 +173,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void reset() {
-
         synchronized (A.p) {
-
             if (mBdio) {
                 dioToggle();
             }
@@ -184,7 +181,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
 
             try {
                 mWdio.join(1000);
-            } catch (Exception x) {
+            } catch (@SuppressWarnings("unused") Exception x) {
                 //
             }
             A.db._shutdown();
@@ -377,7 +374,6 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void setEnabled_nio(boolean b) {
-
         if (!killed()) {
             jpOnio.setEnabled(b);
             jcbMa.setEnabled(b);
@@ -386,9 +382,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void nioEnable(boolean b) {
-
         if (!killed()) {
-
             if (b) {
                 jbButt[JPanelMain.B_CONN].setText(JPanelMain.S_NIOD);
             } else {
@@ -400,9 +394,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void fatal(boolean b) {
-
         if (b) {
-
             if (mBdio) {
                 dioToggle();
             }
@@ -439,7 +431,6 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     ///////////////////////////// IMPLEMENTATIONS////////////////////////////////
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
-
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             hlGo(e.getDescription());
         } else if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
@@ -450,6 +441,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
         }
     }
 
+    @SuppressWarnings("unused")
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
@@ -463,14 +455,12 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
         } else if (source == jbButt[JPanelMain.B_CONN]) {
             nioToggle();
         } else if (source == jbButt[JPanelMain.B_EXPO]) {
-
             if (mWdiv != null) {
                 return;
             }
             mWdiv = new ExImp(false);
             mWdiv.start();
         } else if (source == jbButt[JPanelMain.B_IMPO]) {
-
             if (mWdiv != null) {
                 return;
             }
@@ -490,7 +480,6 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
             mBkill = false;
             fatal(false);
         } else if (source == mTgui) {
-
             if (jtp.getSelectedComponent() == jpJob) {
                 jpJob.update();
             }
@@ -529,14 +518,12 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     private void startLog() {
-
         if (jepM.openLogFile(jpOdiv.tfLogfl.getText())) {
             jpOdiv.tfLogfl.setEnabled(false);
         }
     }
 
     private void startDB() {
-
         if (A.db._ok() || mWdiv != null) {
             return;
         }
@@ -569,9 +556,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     private void dioStart() {
-
         if (mWdio == null) {
-
             if (!A.jobs.workForDio()) {
                 Thread rw = new RecDir(jpOdiv.getDirs(), true);
                 rw.start();
@@ -605,9 +590,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     private boolean nioEnableInt() {
-
         if (!killed() && mWnio == null) {
-
             // if(A.up.usr==null||A.up.psw==null||A.up.key==null)
             if (new JDialogLogin().getPass() == null) {
                 return false;
@@ -733,7 +716,6 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void optl(Options o) {
-
         try {
             jcbMa.setSelected(o.getB(Options.B_ADDFILE));
             Hyper.dec(o.getS(Options.S_HTMLCOL));
@@ -807,7 +789,6 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
     }
 
     public void select(File[] files) {
-
         if (mWdiv != null) {
             A.dialog("Message", "There is already a thread like this running.");
             return;
@@ -874,13 +855,11 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
         }
 
         private int addFileRecursive(File file) {
-
             if (mBcrw) {
                 return 0;
             }
 
             if (file.isDirectory()) {
-
                 if (print && (nd++) % 100 == 0) {
                     status0("Checking: " + file);
                 }
@@ -963,9 +942,7 @@ public class JPanelMain extends JPanel implements Log, ActionListener, Hyperlink
 
         @Override
         public void run() {
-
             try {
-
                 if (imp) {
                     Parser.importDB();
                     jpAlt.updateAlt(true);

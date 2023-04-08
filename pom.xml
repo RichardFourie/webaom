@@ -4,12 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.arucard21.epox.webaom</groupId>
 	<artifactId>webaom</artifactId>
-	<version>2.0.1</version>
+	<version>2.1.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sqlite-jdbc-version>3.41.2.1</sqlite-jdbc-version>
 		<gnu-crypto-version>2.0.1</gnu-crypto-version>
-		<jakarta.annotation-api-version>2.1.1</jakarta.annotation-api-version>
 		<maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
 		<maven-surefire-plugin-version>3.0.0</maven-surefire-plugin-version>
 	</properties>

@@ -30,53 +30,54 @@ public class AConR {
     public String data = null, tag;
 
     public AConR(String sTag, int tag_len, String raw) throws AConEx, TagEx, SocketTimeoutException {
+        String newRaw = raw;
 
-        if (sTag != null && raw.length() > 0 && raw.charAt(0) == 't') {
-            tag = raw.substring(0, tag_len + 1);
+        if (sTag != null && newRaw.length() > 0 && newRaw.charAt(0) == 't') {
+            tag = newRaw.substring(0, tag_len + 1);
 
             if (!tag.equals(sTag)) {
                 throw new TagEx();
             }
-            raw = raw.substring(tag_len + 2);
+            newRaw = newRaw.substring(tag_len + 2);
         }
 
         try {
-            code = Integer.parseInt(raw.substring(0, 3));
-        } catch (NumberFormatException e) {
+            code = Integer.parseInt(newRaw.substring(0, 3));
+        } catch (@SuppressWarnings("unused") NumberFormatException e) {
             throw new AConEx(AConEx.ANIDB_SERVER_ERROR, "Unexpected response");
         }
 
         if ((code > 600 && code < 700) && code != 602) {
-            throw new AConEx(AConEx.ANIDB_SERVER_ERROR, raw);
+            throw new AConEx(AConEx.ANIDB_SERVER_ERROR, newRaw);
         }
 
         int i;
 
         switch (code) {
         case BANNED:
-            i = raw.indexOf('\n');
+            i = newRaw.indexOf('\n');
             String why = "Unknown";
             if (i > 0) {
-                why = raw.substring(i + 1);
+                why = newRaw.substring(i + 1);
             }
             throw new AConEx(AConEx.CLIENT_USER, "Banned: " + why);
         case LOGIN_ACCEPTED:
         case LOGIN_ACCEPTED_NEW_VER:
-            i = raw.indexOf("LOGIN ACCEPTED");
-            data = raw.substring(4, i - 1);
-            message = raw.substring(i);
+            i = newRaw.indexOf("LOGIN ACCEPTED");
+            data = newRaw.substring(4, i - 1);
+            message = newRaw.substring(i);
             break;
         case ENCRYPTION_ENABLED:
-            i = raw.indexOf("ENCRYPTION ENABLED");
-            data = raw.substring(4, i - 1);
-            message = raw.substring(i);
+            i = newRaw.indexOf("ENCRYPTION ENABLED");
+            data = newRaw.substring(4, i - 1);
+            message = newRaw.substring(i);
             break;
         case ACCESS_DENIED:
             throw new AConEx(AConEx.CLIENT_USER);
         case SERVER_BUSY:
             throw new SocketTimeoutException();
         case CLIENT_BANNED:
-            message = raw.substring(4, 17);
+            message = newRaw.substring(4, 17);
             // data = raw.substring(18);
             throw new AConEx(AConEx.CLIENT_BANNED);
         case CLIENT_VERSION_OUTDATED:
@@ -84,12 +85,12 @@ public class AConR {
         case ILLEGAL_INPUT_OR_ACCESS_DENIED:
             throw new AConEx(AConEx.CLIENT_BUG, "Illegal Input or Access Denied");
         default:
-            i = raw.indexOf('\n');
+            i = newRaw.indexOf('\n');
             if (i > 0) {
-                message = raw.substring(4, i);
-                data = raw.substring(i + 1);
+                message = newRaw.substring(4, i);
+                data = newRaw.substring(i + 1);
             } else {
-                message = raw.substring(4);
+                message = newRaw.substring(4);
             }
         }
         data = U.htmldesc(data);

@@ -104,7 +104,6 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
 
     @Override
     public Class<?> getColumnClass(int col) {
-
         if (col == TableModelJobs.FSIZ) {
             return Long.class;
         }
@@ -122,17 +121,17 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        row = getRowIndex(row);
+        int newRow = getRowIndex(row);
 
-        if (col < 1 || row != m_current_row) { // if col==0 then it is an update
-            m_current_row = row;
-            m_current_job = jl.get(row);
+        if (col < 1 || newRow != m_current_row) { // if col==0 then it is an update
+            m_current_row = newRow;
+            m_current_job = jl.get(newRow);
         }
         Job j = m_current_job;
 
         switch (col) {
         case NUMB:
-            return Integer.valueOf(row + 1);
+            return Integer.valueOf(newRow + 1);
         case FSIZ:
             return Long.valueOf(j.mLs);
         case PATH:
@@ -145,14 +144,16 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
             return j.getStatusText();
         case JOB:
             return j;
+        default:
+            break;
         }
 
         if (j.m_fa == null) {
-
             // return col<FILE?0:"N/A";
             if (col < TableModelJobs.FILE) {
                 return Integer.valueOf(0);
             }
+
             return "N/A";
         }
         String s = null;
@@ -235,7 +236,10 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
         case FMDA:
             s = j.m_fa.mda();
             break;
+        default:
+            break;
         }
+
         return s == null ? "" : s;
     }
 
@@ -252,13 +256,12 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
     }
 
     public int getColumnIndex(String s) {
-
         for (int i = 0; i < TableModelJobs.STRA.length; i++) {
-
             if (TableModelJobs.STRA[i].equals(s)) {
                 return i;
             }
         }
+
         return -1;
     }
 
@@ -269,7 +272,6 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
         centerRend.setHorizontalAlignment(SwingConstants.CENTER);
 
         for (int i = 0; i < TableModelJobs.ccnt; i++) {
-
             if (i != TableModelJobs.FILE) {
                 m.getColumn(i).setCellRenderer(centerRend);
             }
@@ -300,7 +302,6 @@ public class TableModelJobs extends TableModelSortable implements RowModel {
     }
 
     public void convertRows(int rows[]) {
-
         for (int i = 0; i < rows.length; i++) {
             rows[i] = getRowIndex(rows[i]);
         }

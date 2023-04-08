@@ -31,7 +31,6 @@ public class KeyAdapterJob extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
         try {
             int code = e.getKeyCode();
 
@@ -49,6 +48,8 @@ public class KeyAdapterJob extends KeyAdapter {
                 A.p.clear();
                 A.gui.jpAlt.updateAlt(false);
                 return;
+            default:
+                break;
             }
             int i = m_jt.getSelectedRow();
 

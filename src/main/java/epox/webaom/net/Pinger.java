@@ -50,7 +50,7 @@ public class Pinger extends Thread {
             } else {
                 web.msg(ani.getLastError() + ".");
             }
-        } catch (java.net.SocketTimeoutException e) {
+        } catch (@SuppressWarnings("unused") java.net.SocketTimeoutException e) {
             String str = "AniDB is not reachable";
             web.println(Hyper.error(str + "."));
             web.msg(str);

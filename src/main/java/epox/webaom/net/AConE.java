@@ -55,15 +55,15 @@ public class AConE extends ACon {
         default:
             error("Unexpected response (" + r.code + "): " + r.message);
         }
+
         return null;
     }
 
     public static String validate(String str) {
-        str = U.replace(str, "&", "&amp;");
-        str = U.replace(str, "\r", "");
-        return U.replace(str, "\n", "<br />");
+        return U.replace(U.replace(U.replace(str, "&", "&amp;"), "\r", ""), "\n", "<br />");
     }
 
+    @SuppressWarnings("fallthrough")
     public int addFileToMylist(Job j, Mylist m) throws AConEx {
         StringBuilder sb = new StringBuilder(100);
         sb.append("fid=");
@@ -99,6 +99,7 @@ public class AConE extends ACon {
         default:
             error("Unexpected response (" + r.code + "): " + r.message);
         }
+
         return 0;
     }
 
@@ -113,6 +114,7 @@ public class AConE extends ACon {
         default:
             error(r.message + " (" + name + ")");
         }
+
         return false;
     }
     /*

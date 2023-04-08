@@ -34,10 +34,9 @@ public abstract class TableModelSortable extends AbstractTableModel {
     }
 
     protected int getRowIndex(int row) {
-
         try {
             return m_idx[row];
-        } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+        } catch (@SuppressWarnings("unused") NullPointerException | ArrayIndexOutOfBoundsException e) {
             return row;
         }
     }
@@ -48,7 +47,6 @@ public abstract class TableModelSortable extends AbstractTableModel {
     }
 
     public void sort(boolean refresh) {
-
         if (m_sort_col < 0) {
             return;
         }

@@ -34,6 +34,7 @@ public class JPanelJobs extends JPanel implements ActionListener {
     private int mIs = 0, mIf = 0; // status, file state
     private boolean mBu = false;
 
+    @SuppressWarnings("unused")
     public JPanelJobs(JTableJobs j, TableModelJobs s) {
         super(new BorderLayout());
         m_jtj = j;

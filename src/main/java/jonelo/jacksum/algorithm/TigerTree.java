@@ -119,27 +119,29 @@ public class TigerTree extends MessageDigest {
 
     @Override
     protected void engineUpdate(byte[] in, int offset, int length) {
-        byteCount += length;
+        int newOffset = offset;
+        int newLength = length;
+        byteCount += newLength;
         nodes.ensureCapacity(TigerTree.log2Ceil(byteCount / TigerTree.BLOCKSIZE));
 
         if (bufferOffset > 0) {
             int remaining = TigerTree.BLOCKSIZE - bufferOffset;
-            System.arraycopy(in, offset, buffer, bufferOffset, remaining);
+            System.arraycopy(in, newOffset, buffer, bufferOffset, remaining);
             blockUpdate();
             bufferOffset = 0;
-            length -= remaining;
-            offset += remaining;
+            newLength -= remaining;
+            newOffset += remaining;
         }
 
-        while (length >= TigerTree.BLOCKSIZE) {
+        while (newLength >= TigerTree.BLOCKSIZE) {
             blockUpdate(in, offset, TigerTree.BLOCKSIZE);
-            length -= TigerTree.BLOCKSIZE;
-            offset += TigerTree.BLOCKSIZE;
+            newLength -= TigerTree.BLOCKSIZE;
+            newOffset += TigerTree.BLOCKSIZE;
         }
 
-        if (length > 0) {
-            System.arraycopy(in, offset, buffer, 0, length);
-            bufferOffset = length;
+        if (newLength > 0) {
+            System.arraycopy(in, newOffset, buffer, 0, newLength);
+            bufferOffset = newLength;
         }
     }
 
@@ -148,7 +150,7 @@ public class TigerTree extends MessageDigest {
         byte[] hash = new byte[HASHSIZE];
         try {
             engineDigest(hash, 0, HASHSIZE);
-        } catch (DigestException e) {
+        } catch (@SuppressWarnings("unused") DigestException e) {
             return null;
         }
         return hash;
@@ -241,33 +243,36 @@ public class TigerTree extends MessageDigest {
     }
 
     private void push(byte[] data) {
+        byte[] newData = data;
         if (!nodes.isEmpty()) {
             for (int i = 0; i < nodes.size(); i++) {
                 byte[] node = nodes.get(i);
                 if (node == MARKER) {
-                    nodes.set(i, data);
+                    nodes.set(i, newData);
                     return;
                 }
 
                 tiger.reset();
                 tiger.update((byte) 1);
                 tiger.update(node, 0, node.length);
-                tiger.update(data, 0, data.length);
-                data = tiger.digest();
+                tiger.update(newData, 0, newData.length);
+                newData = tiger.digest();
                 nodes.set(i, MARKER);
             }
         }
-        nodes.add(data);
+        nodes.add(newData);
     }
 
     // calculates the next n with 2^n > number
     public static int log2Ceil(long number) {
+        long newNumber = number;
         int n = 0;
-        while (number > 1) {
-            number++; // for rounding up.
-            number >>>= 1;
+        while (newNumber > 1) {
+            newNumber++; // for rounding up.
+            newNumber >>>= 1;
             n++;
         }
+
         return n;
     }
 }

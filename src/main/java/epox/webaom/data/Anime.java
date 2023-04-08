@@ -31,7 +31,6 @@ public class Anime extends Base {
     private static int s0 = 1, s1 = 1;
 
     public static void setCol(int i) {
-
         if (Math.abs(i) != Math.abs(Anime.s0)) {
             Anime.s1 = Anime.s0;
         }
@@ -70,7 +69,6 @@ public class Anime extends Base {
     }
 
     public void init() {
-
         if (pro == null) {
             pro = new Bits(eps > 0 ? eps : lep);
         }
@@ -98,11 +96,8 @@ public class Anime extends Base {
     }
 
     private void setorfill(int no, boolean b) {
-
         if (!pro.set(no - 1, b)) {
-
             if (no > (eps > 0 ? eps : lep)) {
-
                 if (!pro.fill(b)) {
                     System.out.println(
                             "@ Completion " + (b ? "over" : "under") + "flow: " + this + " [" + typ + "] epno=" + no);
@@ -112,12 +107,10 @@ public class Anime extends Base {
     }
 
     public void regEp(Ep e, boolean b) {
-
         if (Character.isDigit(e.num.charAt(0))) {
-
             try {
                 setorfill(Integer.parseInt(e.num), b);
-            } catch (NumberFormatException x) {
+            } catch (@SuppressWarnings("unused") NumberFormatException x) {
                 String sa[] = e.num.split(",");
 
                 for (int i = 0; i < sa.length; i++) {
@@ -138,9 +131,7 @@ public class Anime extends Base {
                 }
             }
         } else if (e.num.charAt(0) == 'O') {
-
             try {
-
                 if (e.eng.startsWith("Episodes ")) {
                     int i = e.eng.indexOf('-');
 
@@ -158,7 +149,7 @@ public class Anime extends Base {
                         }
                     }
                 }
-            } catch (Exception x) {
+            } catch (@SuppressWarnings("unused") Exception x) {
                 //
             }
         }
@@ -183,10 +174,10 @@ public class Anime extends Base {
     }
 
     /*
-     * |XXX | _ - normal | XXX| F - missing First part - could be burned |XX XX| L -
-     * hole and has Last - should be able to complete | XXX | E - Ends missing. fist
-     * part could be burned, probably not able to complete | X X | # - there are #
-     * holes |X X X| ^
+     * |X X X | _ - normal | X X X| F - missing First part - could be burned |XX XX|
+     * L - hole and has Last - should be able to complete | X X X | E - Ends
+     * missing. fist part could be burned, probably not able to complete | X X | # -
+     * there are # holes |X X X| ^
      */
     public char miss() {
         /*
@@ -206,6 +197,7 @@ public class Anime extends Base {
         if (x < 3) {
             return pro.first() ? 'l' : 'e';
         }
+
         return (char) (62 + x);// (""+x).charAt(0);
     }
 
@@ -216,6 +208,7 @@ public class Anime extends Base {
         if (i == 0 && Anime.s0 != Anime.s1) {
             return comp(o, Anime.s1);
         }
+
         return i;
     }
 
@@ -249,8 +242,11 @@ public class Anime extends Base {
              * { if(b.last()==a.last()) return 0;//a.getPct()-b.getPct(); if(b.last()=='F')
              * return 1; return -1; }
              */
+            default:
+                break;
             }
         }
+
         return super.compareTo(obj);
     }
 

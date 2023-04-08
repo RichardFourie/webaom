@@ -63,15 +63,13 @@ public class JTextInputDialog extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (e.getSource() == ok || e.getSource() == jtf) {
             val = jtf.getText();
 
             if (num == 0) {
-
                 try {
                     num = Integer.parseInt(val.trim());
-                } catch (NumberFormatException x) {
+                } catch (@SuppressWarnings("unused") NumberFormatException x) {
                     // don't care
                     num = 0;
                 }

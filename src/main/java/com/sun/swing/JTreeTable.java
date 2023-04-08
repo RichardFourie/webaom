@@ -192,11 +192,10 @@ public class JTreeTable extends JTable {
          */
         @Override
         public void setRowHeight(int rowHeight) {
-
             if (rowHeight > 0) {
                 super.setRowHeight(rowHeight);
 
-                if (JTreeTable.this != null && JTreeTable.this.getRowHeight() != rowHeight) {
+                if (JTreeTable.this.getRowHeight() != rowHeight) {
                     JTreeTable.this.setRowHeight(getRowHeight());
                 }
             }
@@ -226,7 +225,6 @@ public class JTreeTable extends JTable {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                 int row, int column) {
-
             if (isSelected) {
                 setBackground(table.getSelectionBackground());
             } else {
@@ -267,17 +265,15 @@ public class JTreeTable extends JTable {
          */
         @Override
         public boolean isCellEditable(EventObject e) {
-
             if (e instanceof MouseEvent) {
-
                 for (int counter = getColumnCount() - 1; counter >= 0; counter--) {
-
                     if (getColumnClass(counter) == TreeTableModel.class) {
                         tree.dispatchEvent((MouseEvent) e);
                         break;
                     }
                 }
             }
+
             return false;
         }
     }
@@ -313,7 +309,6 @@ public class JTreeTable extends JTable {
          */
         @Override
         public void resetRowSelection() {
-
             if (!updatingListSelectionModel) {
                 updatingListSelectionModel = true;
 
@@ -342,7 +337,6 @@ public class JTreeTable extends JTable {
          * selected paths from the selected rows in the list selection model.
          */
         protected void updateSelectedPathsFromSelectedRows() {
-
             if (!updatingListSelectionModel) {
                 updatingListSelectionModel = true;
 
@@ -355,9 +349,7 @@ public class JTreeTable extends JTable {
                     clearSelection();
 
                     if (min != -1 && max != -1) {
-
                         for (int counter = min; counter <= max; counter++) {
-
                             if (listSelectionModel.isSelectedIndex(counter)) {
                                 TreePath selPath = tree.getPathForRow(counter);
 

@@ -26,7 +26,6 @@ package epox.webaom.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -57,7 +56,7 @@ import epox.webaom.RuleMenu;
 import epox.webaom.Rules;
 import epox.webaom.WebAOM;
 
-public class JPanelOptRls extends JPanel implements Action, ActionListener, ItemListener {
+public class JPanelOptRls extends JPanel implements Action, ItemListener {
     /**
      *
      */
@@ -71,6 +70,7 @@ public class JPanelOptRls extends JPanel implements Action, ActionListener, Item
     protected JTable jtDef;
     protected TableModelDS rmDef;
 
+    @SuppressWarnings("resource")
     public JPanelOptRls(Rules rules) {
         super(new BorderLayout());
         // super(new GridLayout(2,1));
@@ -176,7 +176,7 @@ public class JPanelOptRls extends JPanel implements Action, ActionListener, Item
         Object obj = e.getSource();
 
         if (obj == jtDef) {
-            removeElements(rmDef.getData(), jtDef.getSelectedRows());
+            JPanelOptRls.removeElements(rmDef.getData(), jtDef.getSelectedRows());
         } else if (obj == jbOK) {
             testAndApplyRules();
         }
@@ -188,7 +188,6 @@ public class JPanelOptRls extends JPanel implements Action, ActionListener, Item
         Object obj = e.getSource();
 
         if (e.getStateChange() == ItemEvent.DESELECTED) {
-
             if (obj == jrbMov) {
                 rules.setMov(jta.getText());
             } else {
@@ -243,7 +242,7 @@ public class JPanelOptRls extends JPanel implements Action, ActionListener, Item
         }
     }
 
-    private void removeElements(ArrayList<DSData> v, int rows[]) {
+    private static void removeElements(ArrayList<DSData> v, int rows[]) {
         Arrays.sort(rows);
 
         for (int i = rows.length - 1; i >= 0; i--) {
@@ -261,16 +260,16 @@ public class JPanelOptRls extends JPanel implements Action, ActionListener, Item
 
     protected void moveElement(JTable jt, ArrayList<DSData> v, int r) {
         int i = jt.getSelectedRow();
-        r += i;
+        int newR = r + i;
 
-        if (r >= v.size() || r < 0) {
+        if (newR >= v.size() || newR < 0) {
             return;
         }
 
         try {
             DSData o = v.remove(i);
-            v.add(r, o);
-            jt.setRowSelectionInterval(r, r);
+            v.add(newR, o);
+            jt.setRowSelectionInterval(newR, newR);
             jt.updateUI();
         } catch (Exception e) {
             e.printStackTrace();

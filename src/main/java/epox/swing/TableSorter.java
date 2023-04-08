@@ -34,7 +34,6 @@ public class TableSorter {
     }
 
     public void sort(int[] array, int col, boolean refresh) {
-
         if (array.length < 1) {
             return;
         }
@@ -48,7 +47,6 @@ public class TableSorter {
                 invert(array);
             }
         } else {
-
             if (m_cmp0 != col) {
                 m_cmp1 = m_cmp0;
             }
@@ -78,7 +76,7 @@ public class TableSorter {
         int x = m_mod.getRowCount() - 1;
 
         for (int i = 0; i <= x / 2; i++) {
-            swap(a, i, x - i);
+            TableSorter.swap(a, i, x - i);
         }
     }
 
@@ -97,24 +95,23 @@ public class TableSorter {
             i = (r + l) / 2;
 
             if (compare(l, i) > 0) {
-                swap(a, l, i);
+                TableSorter.swap(a, l, i);
             }
 
             if (compare(l, r) > 0) {
-                swap(a, l, r);
+                TableSorter.swap(a, l, r);
             }
 
             if (compare(i, r) > 0) {
-                swap(a, i, r);
+                TableSorter.swap(a, i, r);
             }
 
             j = r - 1;
-            swap(a, i, j);
+            TableSorter.swap(a, i, j);
             i = l;
             v = j;
 
             for (;;) {
-
                 do {
                     i++;
                 } while (compare(i, v) < 0);
@@ -126,15 +123,15 @@ public class TableSorter {
                 if (j < i) {
                     break;
                 }
-                swap(a, i, j);
+                TableSorter.swap(a, i, j);
             }
-            swap(a, i, r - 1);
+            TableSorter.swap(a, i, r - 1);
             quickSort(a, l, j);
             quickSort(a, i + 1, r);
         }
     }
 
-    private void swap(int a[], int i, int j) {
+    private static void swap(int a[], int i, int j) {
         int t;
         t = a[i];
         a[i] = a[j];
@@ -145,9 +142,8 @@ public class TableSorter {
         int i, j;
 
         for (i = l; i <= h; i++) {
-
             for (j = i; j > l && compare(j - 1, j) > 0; j--) {
-                swap(a, j, j - 1);
+                TableSorter.swap(a, j, j - 1);
             }
         }
     }
@@ -158,6 +154,7 @@ public class TableSorter {
         if (x == 0) {
             return compare0(m_cmp1, r, s);
         }
+
         return x;
     }
 

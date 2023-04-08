@@ -24,6 +24,7 @@ public class JPanelAlt extends JPanel {
     public JComboBox<String> jcbAm, jcbAs, jcbAt, jcbEt;
     public JTextField jtfAp;
 
+    @SuppressWarnings("unused")
     public JPanelAlt(ActionListener al) {
         TableModelAlt am = new TableModelAlt();
         jttAlt = new JTreeTableR(am);
@@ -83,9 +84,7 @@ public class JPanelAlt extends JPanel {
     }
 
     protected void updateAlt(boolean r) {
-
         synchronized (A.p) {
-
             if (r) {
                 A.cache.rebuildTree();
             }

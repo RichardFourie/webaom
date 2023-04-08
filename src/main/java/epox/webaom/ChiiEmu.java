@@ -585,8 +585,10 @@ public class ChiiEmu implements CommandModel {
 
     protected static String getS(int i) {
         return switch (i) {
-        case I_WATCH -> "WATCHED: usage: !watched <anime> <epnumber>, !state <fid>, !state <ed2k link>, epnumber may be 'all', 'upto <epno>' or 'none'.";
-        case I_STATE -> "STATE: usage: !state <anime> <epnumber> <state>, !state <fid> <state>, !state <ed2k link> <state>, !state last <state>, epnumber may be 'all' or 'upto <epno>'. State is: unknown/hdd/cd/deleted.";
+        case I_WATCH ->
+            "WATCHED: usage: !watched <anime> <epnumber>, !state <fid>, !state <ed2k link>, epnumber may be 'all', 'upto <epno>' or 'none'.";
+        case I_STATE ->
+            "STATE: usage: !state <anime> <epnumber> <state>, !state <fid> <state>, !state <ed2k link> <state>, !state last <state>, epnumber may be 'all' or 'upto <epno>'. State is: unknown/hdd/cd/deleted.";
         case I_STAT2 -> "!state2 anime/aid, group/gid/all, all/upto x/x, unknown/hdd/cd/deleted";
         case I_STORA -> "!storage anime/aid, group/gid/all, all/upto x/x, text";
         default -> "NOO!";
