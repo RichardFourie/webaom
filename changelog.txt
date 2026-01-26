@@ -1,7 +1,7 @@
 WebAOM!
 
 2.2.0 2026.01.26
-*Correctly handle response for when trying to add a file that already exists in your list.
+*Correctly handle the response when trying to add a file that already exists in your list.
 *Update SQLite from v3.41.2.1 to v3.51.1.0
 *Update Maven compiler plugin from v3.11.0 to v3.14.1
 
