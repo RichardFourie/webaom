@@ -91,7 +91,7 @@ public class AConE extends ACon {
             return Integer.parseInt(r.data);
         case AConR.FILE_ALREADY_IN_MYLIST:
             error(j.m_fa.def + " is already in mylist.");
-            return Integer.parseInt(r.data);
+            return Integer.parseInt(r.data.split("|", -1)[0]);
         case AConR.NO_SUCH_MYLIST_FILE:
             error(j.m_fa.def + " was not found in AniDB.");
         case AConR.MYLIST_ENTRY_EDITED:

@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.arucard21.epox.webaom</groupId>
 	<artifactId>webaom</artifactId>
-	<version>2.1.0</version>
+	<version>2.2.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sqlite-jdbc-version>3.41.2.1</sqlite-jdbc-version>
+		<sqlite-jdbc-version>3.51.1.0</sqlite-jdbc-version>
 		<gnu-crypto-version>2.0.1</gnu-crypto-version>
-		<maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
+		<maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
 	</properties>
 	<dependencies>
 		<dependency>
