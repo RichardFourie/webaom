@@ -7,9 +7,9 @@
 	<version>2.2.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sqlite-jdbc-version>3.51.1.0</sqlite-jdbc-version>
+		<sqlite-jdbc-version>3.54.1.0</sqlite-jdbc-version>
 		<gnu-crypto-version>2.0.1</gnu-crypto-version>
-		<maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
+		<maven-compiler-plugin-version>3.16.0</maven-compiler-plugin-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,7 +59,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>${maven-compiler-plugin-version}</version>
 				<configuration>
-					<release>17</release>
+					<release>25</release>
 				</configuration>
 			</plugin>
 		</plugins>
