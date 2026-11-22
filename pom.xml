@@ -9,6 +9,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sqlite-jdbc-version>3.54.1.0</sqlite-jdbc-version>
 		<gnu-crypto-version>2.0.1</gnu-crypto-version>
+		<maven-assembly-plugin-version>3.8.0</maven-assembly-plugin-version>
 		<maven-compiler-plugin-version>3.16.0</maven-compiler-plugin-version>
 	</properties>
 	<dependencies>
@@ -36,6 +37,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven-assembly-plugin-version}</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
