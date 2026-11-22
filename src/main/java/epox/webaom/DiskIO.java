@@ -64,18 +64,13 @@ public class DiskIO implements Runnable {
 
                 // !A.nr_dio = j.mIid;
                 switch (j.getStatus()) {
-                case Job.HASHWAIT:
-                    fileHash(j);
-                    break;
-                case Job.MOVEWAIT:
-                    DiskIO.fileMove(j);
-                    break;
-                case Job.PARSEWAIT:
-                    DiskIO.fileParse(j);
-                    break;
-                default:
+                case Job.HASHWAIT -> fileHash(j);
+                case Job.MOVEWAIT -> DiskIO.fileMove(j);
+                case Job.PARSEWAIT -> DiskIO.fileParse(j);
+                default -> {
                     A.dialog("INF LOOP", "Illegal status: " + j.getStatusText());
                     A.gui.kill();
+                }
                 }
                 // !A.nr_dio = -1;
                 A.gui.jpb0.setValue(0);

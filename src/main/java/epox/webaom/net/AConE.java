@@ -44,16 +44,12 @@ public class AConE extends ACon {
     private String[] retrieveFileData(AConR r, String name) {
 
         switch (r.code) {
-        case AConR.FILE:
+        case AConR.FILE -> {
             return U.split(r.data, '|');
-        case AConR.NO_SUCH_FILE:
-            error("No such file in AniDB: " + name);
-            break;
-        case AConR.INTERNAL_SERVER_ERROR:
-            error("Internal server error on " + name + ". (Illegal char in epname?)");
-            break;
-        default:
-            error("Unexpected response (" + r.code + "): " + r.message);
+        }
+        case AConR.NO_SUCH_FILE -> error("No such file in AniDB: " + name);
+        case AConR.INTERNAL_SERVER_ERROR -> error("Internal server error on " + name + ". (Illegal char in epname?)");
+        default -> error("Unexpected response (" + r.code + "): " + r.message);
         }
 
         return null;
@@ -107,12 +103,13 @@ public class AConE extends ACon {
         AConR r = send("MYLISTDEL", "lid=" + lid, true);
 
         switch (r.code) {
-        case AConR.MYLIST_ENTRY_DELETED:
+        case AConR.MYLIST_ENTRY_DELETED -> {
             return true;
-        case AConR.NO_SUCH_MYLIST_ENTRY:
+        }
+        case AConR.NO_SUCH_MYLIST_ENTRY -> {
             return false;
-        default:
-            error(r.message + " (" + name + ")");
+        }
+        default -> error(r.message + " (" + name + ")");
         }
 
         return false;

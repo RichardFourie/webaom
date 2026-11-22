@@ -281,16 +281,12 @@ public class ACon implements ActionListener {
         }
 
         switch (r.code) {
-        case AConR.LOGGED_OUT:
-        case AConR.NOT_LOGGED_IN:
-        case AConR.INVALID_SESSION:
-        case AConR.LOGIN_FIRST:
+        case AConR.LOGGED_OUT, AConR.NOT_LOGGED_IN, AConR.INVALID_SESSION, AConR.LOGIN_FIRST -> {
             m_authed = false;
             m_enc = "ascii";
-
             return true;
-        default:
-            error(r.message);
+        }
+        default -> error(r.message);
         }
 
         return false;

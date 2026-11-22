@@ -171,17 +171,12 @@ public class FileInfo {
         ArrayList<AMap> v = null;
 
         switch (type) {
-        case 0:
-            v = vid;
-            break;
-        case 1:
-            v = aud;
-            break;
-        case 2:
-            v = sub;
-            break;
-        default:
+        case 0 -> v = vid;
+        case 1 -> v = aud;
+        case 2 -> v = sub;
+        default -> {
             return null;
+        }
         }
         StringBuilder sb = new StringBuilder(schema.length() * v.size());
 
